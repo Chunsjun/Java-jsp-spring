@@ -1,4 +1,4 @@
 # glowing
-just develope program myself
+just develop program myself
 
 and i love eclipse
