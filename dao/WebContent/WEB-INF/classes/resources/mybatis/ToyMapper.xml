@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.mybatis.persistence.ToyMapper">
+
+	<resultMap id="toyResultMap" type="toy">
+		<id column="TOY_NO" property="toyNo"/><!-- PK -->
+		<result column="TOY_NAME" property="toyName"/>
+		<result column="TOY_PRICE" property="toyPrice"/>
+		<result column="SHOP_NO" property="shopNo"/>
+	</resultMap>
+
+	<!-- 목록조회 매핑 구문 -->
+	<select id="list" parameterType="toy" resultMap="toyResultMap">
+		SELECT TOY_NO, TOY_NAME, TOY_PRICE, SHOP_NO
+		FROM TOY ORDER BY TOY_NO
+		<where>
+			<if test="toyNo > 0">
+				AND TOY_NO = #{toyNo}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insert" parameterType="toy">
+		<selectKey keyColumn="TOY_NO" keyProperty="toyNo" resultType="int" order="BEFORE">
+			SELECT TOY_NO_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+		    INSERT INTO TOY
+				(TOY_NO, TOY_NAME, TOY_PRICE, SHOP_NO)
+		   	 VALUES
+				(#{toyNo},#{toyName},#{toyPrice},#{shopNo})
+	</insert>
+	
+	<delete id="delete" parameterType="toy">
+		DELETE TOY WHERE TOY_NO=#{toyNo}
+	</delete>
+	
+	<update id="update" parameterType="toy">
+		UPDATE TOY SET TOY_NAME=#{toyName}, TOY_PRICE=#{toyPrice}, SHOP_NO=#{shopNo} 
+		WHERE TOY_NO=#{toyNo}
+	</update>
+	
+	<select id="select" parameterType="toy" resultMap="toyResultMap">
+		SELECT TOY_NO, TOY_NAME, TOY_PRICE, SHOP_NO
+		FROM TOY
+		WHERE TOY_NO=#{toyNo}
+	</select>
+</mapper>
