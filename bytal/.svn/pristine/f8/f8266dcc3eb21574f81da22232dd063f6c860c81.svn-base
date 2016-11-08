@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.WebCradleMapper">
+	<!-- 거치대 리절트맵 -->
+	<resultMap type="cradle" id="cradleResultMap">
+		<id column="CRADLE_NO" property="cradleNo"/>
+		<result column="CRADLE_NAME" property="cradleName"/>
+		<result column="X_COORDINATE" property="xCoordinate"/>
+		<result column="Y_COORDINATE" property="yCoordinate"/>
+		<result column="CRADLE_STATUS" property="cradleStatus"/>
+	</resultMap>
+	
+	<sql id="selectSql">
+       SELECT ROWNUM RN, CRADLE_NO, CRADLE_NAME, X_COORDINATE, Y_COORDINATE, CRADLE_STATUS
+        FROM CRADLE
+   </sql>
+   
+   <sql id="whereSql">
+        <where>
+            <if test="cradleNo > 0">
+                AND CRADLE_NO = #{cradleNo}
+            </if>
+            <if test="cradleStatus != null and cradleStatus != ''">
+                AND CRADLE_STATUS = #{cradleStatus}
+            </if>
+            <if test="searchType == 'cradleName' and searchKeyword != null and searchKeyword != ''">
+                AND LOWER(CRADLE_NAME) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+        </where>
+   </sql>
+	
+	<!-- 거치대 목록 조회 매핑 -->
+	<select id="list" parameterType="cradle" resultMap="cradleResultMap">
+		SELECT TB.* FROM (
+         <include refid="selectSql" />
+         <include refid="whereSql" />
+         ORDER BY CRADLE_NO
+      ) TB
+      <where>
+          <if test="itemStartNo != null and itemStartNo != ''">
+             AND RN BETWEEN #{itemStartNo} AND #{itemEndNo}
+          </if>
+      </where>
+	</select>
+	
+	<!-- 대여소 총 개수 -->
+	<select id="count" parameterType="cradle" resultType="int">
+		SELECT COUNT(*) FROM (
+         <include refid="selectSql" />
+         <include refid="whereSql" />
+      ) TB
+	</select>
+	
+	<!-- 거치대 등록 -->
+	<insert id="add" parameterType="cradle">
+		<selectKey keyColumn="CRADLE_NO" keyProperty="cradleNo" resultType="int" order="BEFORE">
+			SELECT SEQ_CRADLE_NO.NEXTVAL FROM DUAL
+		</selectKey>
+			INSERT INTO CRADLE
+				(CRADLE_NO,CRADLE_NAME,X_COORDINATE,Y_COORDINATE,CRADLE_STATUS)
+			VALUES 
+				(
+				 #{cradleNo},
+				 #{cradleName, jdbcType=VARCHAR},
+				 #{xCoordinate, jdbcType=VARCHAR},
+				 #{yCoordinate, jdbcType=VARCHAR},
+				 #{cradleStatus, jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 거치대 삭제 -->
+	<delete id="delete" parameterType="int">
+		DELETE FROM CRADLE WHERE CRADLE_NO = #{cradleNo}
+	</delete>
+	
+	<!-- 거치대 수정 -->
+	<update id="edit" parameterType="cradle">
+		UPDATE CRADLE SET CRADLE_NAME=#{cradleName}, CRADLE_STATUS=#{cradleStatus} 
+		WHERE CRADLE_NO=#{cradleNo}
+	</update>
+	
+	<!-- 거치대  조회-->
+	<select id="view" parameterType="int" resultMap="cradleResultMap">
+		SELECT * FROM CRADLE WHERE CRADLE_NO = #{cradleNo}
+	</select>
+</mapper>

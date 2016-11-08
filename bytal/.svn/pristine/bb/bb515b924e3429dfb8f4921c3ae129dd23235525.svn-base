@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+    <context:component-scan base-package="org.bytal" />
+
+    <mvc:annotation-driven />
+
+    <mvc:default-servlet-handler />
+    
+    <mvc:interceptors>
+    <!-- Web 인터셉터 -->
+    	<mvc:interceptor>
+    		<mvc:mapping path="/bytal/**"/>
+    		<mvc:exclude-mapping path="/bytal/login"/>
+    		<mvc:exclude-mapping path="/bytal/main"/>
+    		<mvc:exclude-mapping path="/bytal/join"/>
+    		<mvc:exclude-mapping path="/bytal/searchId"/>
+    		<mvc:exclude-mapping path="/bytal/PopId"/>
+    		<mvc:exclude-mapping path="/bytal/PopPassword"/>
+    		<mvc:exclude-mapping path="/bytal/checkId"/>
+    		<mvc:exclude-mapping path="/bytal/bicycle"/>
+    		<mvc:exclude-mapping path="/bytal/info"/>
+    		<mvc:exclude-mapping path="/bytal/developer"/>
+    		<bean class="org.bytal.interceptor.MemberCheckInterceptor"/>
+    	</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/bytal/listMember"/>
+			<mvc:mapping path="/bytal/viewMember"/>
+			<mvc:mapping path="/bytal/bicycle/addBicycle"/>
+			<mvc:mapping path="/bytal/bicycle/editBicycle"/>
+			<mvc:mapping path="/bytal/cradleAdd"/>
+			<mvc:mapping path="/bytal/cradleEdit"/>
+			<bean class="org.bytal.interceptor.AdminCheckInterceptor" />
+		</mvc:interceptor>
+    	
+    	<!-- 대여소 인터셉터 -->
+    	<mvc:interceptor>
+    		<mvc:mapping path="/rent/**"/>
+    		<mvc:exclude-mapping path="/rent/rent"/>
+    		<mvc:exclude-mapping path="/rent/main"/>
+    		<mvc:exclude-mapping path="/rent/login"/>
+    		<bean class="org.bytal.interceptor.RentInterceptor"/>
+    	</mvc:interceptor>
+    	<mvc:interceptor>
+    		<mvc:mapping path="/return/**"/>
+    		<mvc:exclude-mapping path="/return/return"/>
+    		<mvc:exclude-mapping path="/return/main"/>
+    		<mvc:exclude-mapping path="/return/returnBicycleForm"/>
+    		<bean class="org.bytal.interceptor.ReturnInterceptor"/>
+    	</mvc:interceptor>
+    </mvc:interceptors>
+    
+
+    <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+</beans>

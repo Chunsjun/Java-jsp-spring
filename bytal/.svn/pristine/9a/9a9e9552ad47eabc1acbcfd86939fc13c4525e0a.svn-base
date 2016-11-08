@@ -1,0 +1,19 @@
+package org.bytal.service.deviceService;
+
+import java.util.List;
+
+import org.bytal.domain.Bicycle;
+import org.bytal.domain.Member;
+import org.bytal.domain.Rent;
+
+public interface DeviceService {
+	public Member view(Member member);
+	public List<Bicycle> find(Bicycle bicycle);
+	public Bicycle view(Bicycle bicycle);
+	public void add(Rent rent);
+	public void edit(Bicycle bicycle);
+	
+	public Rent view(Rent rent);
+	public void edit(Rent rent);
+	
+	}

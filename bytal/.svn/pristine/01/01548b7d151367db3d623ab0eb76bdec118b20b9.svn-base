@@ -1,0 +1,400 @@
+package org.bytal.presentation;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.bytal.domain.Board;
+import org.bytal.domain.PageInformation;
+import org.bytal.service.webService.WebBoardService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+@Controller
+@RequestMapping(value = "/bytal")
+public class WebBoardController {
+	@Resource
+	private WebBoardService webBoardService;
+
+	/* 게시판 호출 */
+	@RequestMapping(value = "/board", method = RequestMethod.GET)
+	public ModelAndView board() throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/free");
+		redirectView.setExposeModelAttributes(false);
+		
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자유 게시판 목록 조회 */
+	@RequestMapping(value = "/board/free")
+	public ModelAndView listFreeBoard(HttpServletRequest request, Board board) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/free/listBoard");
+
+		board.setBoardType("1");
+		int totalItemCount = this.webBoardService.count(board);
+
+		PageInformation pageInformation = new PageInformation(request, totalItemCount);
+		modelAndView.addObject("pageNo", pageInformation.getPageNo());
+		modelAndView.addObject("pageItemCount", pageInformation.getPageItemCount());
+		modelAndView.addObject("navigator", pageInformation.getNavigator());
+
+		board.setItemStartNo(pageInformation.getItemStartNo());
+		board.setItemEndNo(pageInformation.getItemEndNo());
+
+		List<Board> listBoard = this.webBoardService.find(board);
+		modelAndView.addObject("listBoard", listBoard);
+		
+		return modelAndView;
+	}
+
+	/* 자유 게시판 상세 조회 */
+	@RequestMapping(value = "/board/free/viewBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView viewFreeBoard(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/free/viewBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 자유 게시판 글 등록 폼 */
+	@RequestMapping(value = "/board/free/addBoard", method = RequestMethod.GET)
+	public String addFreeBoardForm() throws Exception {
+		return "/web/board/free/addBoard";
+	}
+
+	/* 자유 게시판 글 등록 처리 */
+	@RequestMapping(value = "/board/free/addBoard", method = RequestMethod.POST)
+	public ModelAndView addFreeBoard(Board board, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/free");
+		redirectView.setExposeModelAttributes(false);
+
+		board.setWriter((String) request.getSession().getAttribute("memberNo"));
+		board.setBoardType("1");
+
+		this.webBoardService.add(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자유 게시판 글 수정 폼 */
+	@RequestMapping(value = "/board/free/editBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView editFreeBoardForm(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/free/editBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 자유 게시판 글 수정 처리 */
+	@RequestMapping(value = "/board/free/editBoard/{boardNo}", method = RequestMethod.POST)
+	public ModelAndView editFreeBoard(Board board) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/free");
+		redirectView.setExposeModelAttributes(false);
+
+		this.webBoardService.edit(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자유 게시판 글 삭제 처리 */
+	@RequestMapping(value = "/board/free/deleteBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView deleteFreeBoard(@PathVariable int boardNo) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/free");
+		redirectView.setExposeModelAttributes(false);
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		this.webBoardService.remove(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 고장접수 게시판 목록 조회 */
+	@RequestMapping(value = "/board/trouble")
+	public ModelAndView listTroubleBoard(HttpServletRequest request, Board board) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/trouble/listBoard");
+		
+		board.setBoardType("3");
+		int totalItemCount = this.webBoardService.count(board);
+
+		PageInformation pageInformation = new PageInformation(request, totalItemCount);
+		modelAndView.addObject("pageNo", pageInformation.getPageNo());
+		modelAndView.addObject("pageItemCount", pageInformation.getPageItemCount());
+		modelAndView.addObject("navigator", pageInformation.getNavigator());
+
+		board.setItemStartNo(pageInformation.getItemStartNo());
+		board.setItemEndNo(pageInformation.getItemEndNo());
+
+		List<Board> listBoard = this.webBoardService.find(board);
+		modelAndView.addObject("listBoard", listBoard);
+		
+		return modelAndView;
+	}
+
+	/* 고장접수 게시판 상세 조회 */
+	@RequestMapping(value = "/board/trouble/viewBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView viewTroubleBoard(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/trouble/viewBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 고장접수 게시판 글 등록 폼 */
+	@RequestMapping(value = "/board/trouble/addBoard", method = RequestMethod.GET)
+	public String addTroubleBoardForm() throws Exception {
+		return "/web/board/trouble/addBoard";
+	}
+
+	/* 고장접수 게시판 글 등록 처리 */
+	@RequestMapping(value = "/board/trouble/addBoard", method = RequestMethod.POST)
+	public ModelAndView addTroubleBoard(Board board, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/trouble");
+		redirectView.setExposeModelAttributes(false);
+
+		board.setWriter((String) request.getSession().getAttribute("memberNo"));
+		board.setBoardType("3");
+
+		this.webBoardService.add(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 고장접수 게시판 글 수정 폼 */
+	@RequestMapping(value = "/board/trouble/editBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView editTroubleBoardForm(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/trouble/editBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 고장접수 게시판 글 수정 처리 */
+	@RequestMapping(value = "/board/trouble/editBoard/{boardNo}", method = RequestMethod.POST)
+	public ModelAndView editTroubleBoard(Board board) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/trouble");
+		redirectView.setExposeModelAttributes(false);
+
+		this.webBoardService.edit(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 고장접수 게시판 글 삭제 처리 */
+	@RequestMapping(value = "/board/trouble/deleteBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView deleteTroubleBoard(@PathVariable int boardNo) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/trouble");
+		redirectView.setExposeModelAttributes(false);
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		this.webBoardService.remove(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자전거 코스 추천 게시판 목록 조회 */
+	@RequestMapping(value = "/board/course")
+	public ModelAndView listCourseBoard(HttpServletRequest request, Board board) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/course/listBoard");
+		
+		board.setBoardType("2");
+		int totalItemCount = this.webBoardService.count(board);
+
+		PageInformation pageInformation = new PageInformation(request, totalItemCount);
+		modelAndView.addObject("pageNo", pageInformation.getPageNo());
+		modelAndView.addObject("pageItemCount", pageInformation.getPageItemCount());
+		modelAndView.addObject("navigator", pageInformation.getNavigator());
+
+		board.setItemStartNo(pageInformation.getItemStartNo());
+		board.setItemEndNo(pageInformation.getItemEndNo());
+
+		List<Board> listBoard = this.webBoardService.find(board);
+		modelAndView.addObject("listBoard", listBoard);
+		
+		return modelAndView;
+	}
+
+	/* 자전거 코스 추천 게시판 상세 조회 */
+	@RequestMapping(value = "/board/course/viewBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView viewCourseBoard(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/course/viewBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 자전거 코스 추천 게시판 글 등록 폼 */
+	@RequestMapping(value = "/board/course/addBoard", method = RequestMethod.GET)
+	public String addCourseBoardForm() throws Exception {
+		return "/web/board/course/addBoard";
+	}
+
+	/* 자전거 코스 추천 게시판 글 등록 처리 */
+	@RequestMapping(value = "/board/course/addBoard", method = RequestMethod.POST)
+	public ModelAndView addCourseBoard(Board board, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/course");
+		redirectView.setExposeModelAttributes(false);
+
+		board.setWriter((String) request.getSession().getAttribute("memberNo"));
+		board.setBoardType("2");
+
+		this.webBoardService.add(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자전거 코스 추천 게시판 글 수정 폼 */
+	@RequestMapping(value = "/board/course/editBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView editCourseBoardForm(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/course/editBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 자전거 코스 추천 게시판 글 수정 처리 */
+	@RequestMapping(value = "/board/course/editBoard/{boardNo}", method = RequestMethod.POST)
+	public ModelAndView editCourseBoard(Board board) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/course");
+		redirectView.setExposeModelAttributes(false);
+
+		this.webBoardService.edit(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자전거 코스 추천 게시판 글 삭제 처리 */
+	@RequestMapping(value = "/board/course/deleteBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView deleteCourseBoard(@PathVariable int boardNo) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/course");
+		redirectView.setExposeModelAttributes(false);
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		this.webBoardService.remove(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 민원 게시판 목록 조회 */
+	@RequestMapping(value = "/board/complain")
+	public ModelAndView listComplainBoard(HttpServletRequest request, Board board) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/complain/listBoard");
+		
+		board.setBoardType("4");
+		int totalItemCount = this.webBoardService.count(board);
+
+		PageInformation pageInformation = new PageInformation(request, totalItemCount);
+		modelAndView.addObject("pageNo", pageInformation.getPageNo());
+		modelAndView.addObject("pageItemCount", pageInformation.getPageItemCount());
+		modelAndView.addObject("navigator", pageInformation.getNavigator());
+
+		board.setItemStartNo(pageInformation.getItemStartNo());
+		board.setItemEndNo(pageInformation.getItemEndNo());
+
+		List<Board> listBoard = this.webBoardService.find(board);
+		modelAndView.addObject("listBoard", listBoard);
+		
+		return modelAndView;
+	}
+
+	/* 민원 게시판 상세 조회 */
+	@RequestMapping(value = "/board/complain/viewBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView viewComplainBoard(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/complain/viewBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 민원 게시판 글 등록 폼 */
+	@RequestMapping(value = "/board/complain/addBoard", method = RequestMethod.GET)
+	public String addComplainBoardForm() throws Exception {
+		return "/web/board/complain/addBoard";
+	}
+
+	/* 민원 게시판 글 등록 처리 */
+	@RequestMapping(value = "/board/complain/addBoard", method = RequestMethod.POST)
+	public ModelAndView addComplainBoard(Board board, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/complain");
+		redirectView.setExposeModelAttributes(false);
+
+		board.setWriter((String) request.getSession().getAttribute("memberNo"));
+		board.setBoardType("4");
+
+		this.webBoardService.add(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 민원 게시판 글 수정 폼 */
+	@RequestMapping(value = "/board/complain/editBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView editComplainBoardForm(@PathVariable int boardNo) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/board/complain/editBoard");
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		board = this.webBoardService.view(board);
+		modelAndView.addObject("board", board);
+
+		return modelAndView;
+	}
+
+	/* 민원 게시판 글 수정 처리 */
+	@RequestMapping(value = "/board/complain/editBoard/{boardNo}", method = RequestMethod.POST)
+	public ModelAndView editComplainBoard(Board board) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/complain");
+		redirectView.setExposeModelAttributes(false);
+
+		this.webBoardService.edit(board);
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 민원 게시판 글 삭제 처리 */
+	@RequestMapping(value = "/board/complain/deleteBoard/{boardNo}", method = RequestMethod.GET)
+	public ModelAndView deleteComplainBoard(@PathVariable int boardNo) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/board/complain");
+		redirectView.setExposeModelAttributes(false);
+
+		Board board = new Board();
+		board.setBoardNo(boardNo);
+		this.webBoardService.remove(board);
+
+		return new ModelAndView(redirectView);
+	}
+}

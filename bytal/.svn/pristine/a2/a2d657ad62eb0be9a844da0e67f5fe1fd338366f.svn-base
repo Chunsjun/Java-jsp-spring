@@ -1,0 +1,9 @@
+package org.bytal.persistence;
+
+import org.bytal.domain.Member;
+
+public interface DeviceMemberMapper {
+	
+	public Member select(Member member);
+	
+}

@@ -1,0 +1,160 @@
+package org.bytal.presentation;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.bytal.domain.Bicycle;
+import org.bytal.domain.Member;
+import org.bytal.domain.Rent;
+import org.bytal.service.deviceService.DeviceService;
+import org.bytal.service.webService.WebMemberService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+/*111*/
+@Controller
+@RequestMapping(value = "/rent")
+public class RentController {
+	@Resource
+	private DeviceService deviceService;
+
+	@Resource
+	private WebMemberService webMemberService;
+
+	/* 메인 페이지 출력 */
+	@RequestMapping(value = "/main", method = RequestMethod.GET)
+	public String main(HttpSession session) throws Exception {
+		session.removeAttribute("loginAlert");
+		session.removeAttribute("return");
+		session.removeAttribute("rent");
+		return "/device/main";
+	}
+
+	/* 대여 초기 페이지 출력 */
+	@RequestMapping(value = "/rent", method = { RequestMethod.GET, RequestMethod.POST })
+	public String rent() throws Exception {
+		return "/device/rent/rent";
+	}
+	/* 로그인처리 */
+	   @RequestMapping(value = "/login", method = RequestMethod.POST)
+	   public ModelAndView login(HttpSession session, HttpServletRequest request) throws Exception {
+	      RedirectView redirectView = new RedirectView("/rent/selectBicycle");
+	      redirectView.setExposeModelAttributes(false);
+
+	      Member member = new Member();
+	      member.setMemberNo(request.getParameter("id"));
+	      member.setPassword(request.getParameter("password"));
+	      
+	      /*회원 여부 및 대여 여부 확인*/
+	      Member loginMember = deviceService.view(member);
+	      if (loginMember == null) {
+	    	  /*회원이 아닐 경우 경고문*/
+	    	  	session.setAttribute("loginAlert", "2");
+	            Member member1 = new Member();
+	            member1.setMemberNo(request.getParameter("id"));
+	            member1.setPassword(request.getParameter("password"));
+	            
+	            Member loginMember1 = webMemberService.view(member);
+	            if (loginMember1 != null) {
+	            /*회원일 경우 로그인*/
+	            session.setAttribute("memberNo", loginMember1.getMemberNo());
+	            }
+	      }else if (loginMember != null) {
+	        	 session.setAttribute("loginAlert", "1");
+	      }
+	      return new ModelAndView(redirectView);
+	   }
+	
+
+	/* 자전거 대여 페이지 출력 및 리스트 선택 */
+	@RequestMapping(value = "/selectBicycle", method = { RequestMethod.GET, RequestMethod.POST })
+	public ModelAndView list(Bicycle bicycle, HttpServletRequest request) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/device/rent/selectBicycle");
+		
+		bicycle.setBicycleType(request.getParameter("bicycleType"));
+		
+		List<Bicycle> listBicycle = this.deviceService.find(bicycle);
+		modelAndView.addObject("listBicycle", listBicycle);
+			
+		return modelAndView;
+	}
+				
+	/* 대여 확인 페이지 출력 */
+	@RequestMapping(value = "/commitRent", method = { RequestMethod.GET, RequestMethod.POST })
+	public String commitRent() throws Exception {
+		return "/device/rent/commitRent";
+	}
+
+	/* 대여 확인 페이지 세션 처리 */
+	@RequestMapping(value = "/commitRentForm", method = RequestMethod.POST)
+	public ModelAndView list(HttpSession session, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/rent/commitRent");
+		
+				Bicycle bicycle = new Bicycle();
+				bicycle.setBicycleNo(Integer.parseInt(request.getParameter("bicycleNo")));
+				
+				Bicycle keepBicycle = deviceService.view(bicycle);
+
+				if (keepBicycle != null) {
+					session.setAttribute("bicycleNo", keepBicycle.getBicycleNo());
+					session.setAttribute("bicycleType", keepBicycle.getBicycleType());
+					session.setAttribute("cradleNo", keepBicycle.getCradleNo());
+					session.setAttribute("bicycleStatus", keepBicycle.getBicycleStatus());
+					}
+					redirectView.setExposeModelAttributes(false);
+				
+			return new ModelAndView(redirectView);
+	}
+
+	/* 대여 정보 입력 처리 */
+	@RequestMapping(value = "/saveRecode", method = RequestMethod.POST)
+	public ModelAndView add(@RequestParam("memberNo") String memberNo, @RequestParam("bicycleNo") int bicycleNo)
+			throws Exception {
+		RedirectView redirectView = null;
+		try {
+			redirectView = new RedirectView("/rent/logout");
+			redirectView.setExposeModelAttributes(false);
+
+			Rent rent = new Rent();
+			rent.setMemberNo(memberNo);
+			rent.setBicycleNo(bicycleNo);
+
+			this.deviceService.add(rent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView(redirectView);
+	}
+
+	/* 로그아웃 처리 */
+	@RequestMapping(value = "/logout")
+	public String logout(HttpSession session) throws Exception {
+		session.removeAttribute("memberNo");
+		session.removeAttribute("bicycleNo");
+		session.removeAttribute("bicycleType");
+		session.removeAttribute("cradleNo");
+		session.removeAttribute("bicycleStatus");
+		session.removeAttribute("loginAlert");
+		return "/device/main";
+	}
+	
+	/* 대여 완료 팝업 출력 */
+	@RequestMapping(value = "/popUp", method =RequestMethod.GET)
+	public String popUp() throws Exception {
+		return "/device/rent/popUp";
+	}
+	
+	/* 자전거 미선택시 팝업 출력 */
+	@RequestMapping(value = "/selectPopUp", method =RequestMethod.GET)
+	public String selectPopUp() throws Exception {
+		return "/device/rent/selectPopUp";
+	}
+}

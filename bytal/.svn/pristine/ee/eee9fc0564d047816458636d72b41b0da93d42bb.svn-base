@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.WebBoardMapper">
+	<resultMap type="board" id="boardResultMap">
+		<id column="BOARD_NO" property="boardNo" />
+		<result column="TITLE" property="title" />
+		<result column="CONTENT" property="content" />
+		<result column="WRITE_DATE" property="writeDate" />
+		<result column="WRITER" property="writer"/>
+		<result column="BOARD_TYPE" property="boardType"/>
+	</resultMap>
+	
+	<sql id="selectSql">
+		SELECT ROWNUM RN, BOARD_NO, TITLE, CONTENT, WRITE_DATE, WRITER, BOARD_TYPE
+		FROM BOARD
+		
+	</sql>
+	
+	<sql id="whereSql">
+		<where>
+			<if test="boardNo > 0">
+                AND BOARD_NO = #{boardNo}
+            </if>
+            <if test="boardType != null">
+                AND BOARD_TYPE = #{boardType}
+            </if>
+            <if test="searchType == 'title' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(TITLE) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'content' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(CONTENT) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'writer' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(WRITER) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+		</where>
+	</sql>
+
+	<!-- 동적쿼리 select문... 회원조회,로그인,아이디찾기,비밀번호찾기 -->
+	<select id="select" parameterType="board" resultMap="boardResultMap">
+		<include refid="selectSql"/>
+		<include refid="whereSql"/>
+	</select>
+	
+	<select id="list" parameterType="board" resultMap="boardResultMap">
+		SELECT * 
+		FROM (
+				SELECT * FROM(
+					<include refid="selectSql"/>
+					ORDER BY BOARD_NO DESC
+				) 
+				<include refid="whereSql"/>
+			)
+		<where>
+			<if test="itemStartNo != null and itemStartNo != ''">
+				AND RN BETWEEN #{itemStartNo} AND #{itemEndNo}
+			</if>
+		</where>
+	</select>
+	
+	<select id="count" parameterType="board" resultType="int">
+		SELECT COUNT(*) FROM (
+			<include refid="selectSql"/>
+			<include refid="whereSql"/>
+			ORDER BY BOARD_NO DESC
+		) TB
+	</select>
+
+	<!--중복체크는 서비스에서 확인 -->
+	<insert id="insert" parameterType="board">
+	<selectKey keyColumn="BOARD_NO" keyProperty="boardNo" resultType="int" order="BEFORE">
+		SELECT SEQ_BOARD_NO.NEXTVAL FROM DUAL
+	</selectKey>
+		INSERT INTO BOARD
+			(BOARD_NO, TITLE, CONTENT, WRITE_DATE, WRITER, BOARD_TYPE)
+		VALUES
+			(#{boardNo}, #{title}, #{content}, SYSDATE, #{writer}, #{boardType})
+	</insert>
+	
+	<update id="update" parameterType="board">
+		UPDATE BOARD SET TITLE = #{title, jdbcType=VARCHAR}, CONTENT = #{content, jdbcType=VARCHAR}
+		WHERE BOARD_NO = #{boardNo, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="board">
+		DELETE FROM BOARD
+		<include refid="whereSql"/>
+	</delete>
+</mapper>

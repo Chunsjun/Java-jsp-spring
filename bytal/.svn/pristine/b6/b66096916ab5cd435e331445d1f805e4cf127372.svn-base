@@ -1,0 +1,48 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%String memberName = (String) session.getAttribute("memberName");
+  String memberNo = (String) session.getAttribute("memberNo");%>
+<script type="text/javascript">
+	function logout(){
+		var check = confirm("로그아웃 하시겠습니까?");
+		if(check == true){location.href = "/bytal/logout";
+		}else{return;}}
+</script>
+<c:choose>
+<c:when test="${sessionScope.memberNo != null}">
+	<div style="text-align: right;">
+		<font size="5" style="font-weight: bold;"> 환영합니다. </font> 
+			(<%=memberNo%>)
+		<font size="5" style="font-weight: bold;"> <%=memberName%>님 </font><br>
+			<input type="button" value="로그아웃" class="btn btn-link" onclick="javascript:logout();">
+	
+		<c:if test="${sessionScope.memberNo eq 'admin'}">
+			<input type="button" value="회원 관리" class="btn btn-default" onclick="location='/bytal/listMember'">
+		</c:if>
+			<input type="button" value="회원 정보 수정" class="btn btn-default" onclick="location='/bytal/editMemberCheck'">
+	</div>
+</c:when>
+<c:otherwise>
+	<div style="text-align: right;">
+		<input type="button" value="로그인" class="btn btn-success" onclick="location='/bytal/login'">
+		<input type="button" value="회원가입" class="btn btn-primary" onclick="location='/bytal/join'">
+	</div>
+</c:otherwise>
+</c:choose>
+<hr>
+<div style="text-align: right;">
+	<table style="width: 100%;">
+		<tr>
+		<td align="left"><a href="/bytal/main"><img src="/image/logo.png"></a></td>
+		<td>
+			<div class="btn-group btn-group-justified">
+				<a href="/bytal/info" class="btn btn-default">Bytal</a>
+				<a href="/bytal/bicycle" class="btn btn-default">자전거정보</a>
+				<a href="/bytal/board" class="btn btn-default">게시판</a>
+				<a href="/bytal/map" class="btn btn-default">대여소</a>
+			</div>
+		</td>
+		</tr>
+	</table>
+</div>

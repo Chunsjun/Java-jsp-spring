@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.RentMapper">
+
+	<resultMap type="rent" id="rentResultMap">
+		<id column="RENT_NO" property="rentNo" />
+		<result column="MEMBER_NO" property="memberNo" />
+		<result column="BICYCLE_NO" property="bicycleNo" />
+		<result column="RENT_DATE" property="rentDate" />
+		<result column="RETURN_DATE" property="returnDate" />
+		<result column="USER_STATUS" property="userStatus" />
+	</resultMap>
+	 
+	<select id="list" parameterType="rent" resultMap="rentResultMap">
+		SELECT RENT_NO, BICYCLE_NO, MEMBER_NO, RENT_DATE, RETURN_DATE, USER_STATUS 
+		FROM RENT
+	</select>
+	
+	<!-- 멀티 파라미터 자전거, 대여 정보 동시 조회 -->
+	<select id="select" parameterType="rent" resultMap="rentResultMap">
+		
+		SELECT RENT_NO, BICYCLE_NO, MEMBER_NO, TO_CHAR(RENT_DATE, 'YYYY-MM-DD HH24:MI:SS') RENT_DATE, RETURN_DATE, USER_STATUS 
+		FROM RENT
+		WHERE MEMBER_NO = #{memberNo} AND USER_STATUS = 1
+		
+	</select>
+	
+	<insert id="insert" parameterType="rent">
+		<selectKey keyColumn="RENT_NO" keyProperty="rentNo" resultType="int" order="BEFORE">
+			SELECT SEQ_RENT_NO.NEXTVAL FROM DUAL
+		</selectKey>
+		
+		INSERT INTO RENT
+			(RENT_NO, BICYCLE_NO, MEMBER_NO, RENT_DATE, RETURN_DATE, USER_STATUS)
+		VALUES
+			(#{rentNo}, #{bicycleNo}, #{memberNo}, SYSDATE, null, 1)
+			
+	</insert>
+	
+	<update id="update" parameterType="rent">
+		UPDATE RENT SET RETURN_DATE = SYSDATE , USER_STATUS = #{userStatus}
+		WHERE RENT_NO = #{rentNo}
+	</update>
+	
+	<delete id="delete" parameterType="rent">
+		DELETE FROM RENT
+		WHERE RENT_NO = #{rentNo}
+	</delete>
+</mapper>

@@ -1,0 +1,51 @@
+package org.bytal.service.webService;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.bytal.domain.Bicycle;
+import org.bytal.persistence.WebBicycleMapper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WebBicycleServiceImpl implements WebBicycleService{
+	@Resource
+	private WebBicycleMapper webBicycleMapper;
+
+	@Override
+	public List<Bicycle> find(Bicycle bicycle) {
+		// TODO Auto-generated method stub
+		return this.webBicycleMapper.list(bicycle);
+	}
+	@Override
+	public int count(Bicycle bicycle) {
+		// TODO Auto-generated method stub
+		return this.webBicycleMapper.count(bicycle);
+	}
+
+	@Override
+	public Bicycle select(int bicycleNo) {
+		// TODO Auto-generated method stub
+		return this.webBicycleMapper.view(bicycleNo);
+	}
+	
+	@Override
+	public void edit(Bicycle bicycle) {
+		// TODO Auto-generated method stub
+		this.webBicycleMapper.edit(bicycle);
+	}
+	
+	@Override
+	public void add(Bicycle bicycle) {
+		// TODO Auto-generated method stub
+		this.webBicycleMapper.insert(bicycle);
+	}
+	@Override
+	public void remove(int bicycle) {
+		// TODO Auto-generated method stub
+		this.webBicycleMapper.delete(bicycle);
+	}
+
+	
+}

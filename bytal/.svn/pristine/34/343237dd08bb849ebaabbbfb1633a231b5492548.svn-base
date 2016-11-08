@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.WebMemberMapper">
+	<resultMap type="member" id="memberResultMap">
+		<id column="MEMBER_NO" property="memberNo" />
+		<result column="MEMBER_NAME" property="memberName" />
+		<result column="PASSWORD" property="password" />
+		<result column="PHONE_NO" property="phoneNo" />
+		<result column="EMAIL" property="email"/>
+		<result column="JOIN_DATE" property="joinDate"/>
+	</resultMap>
+
+	<!-- 동적쿼리 select문... 회원조회,로그인,아이디찾기,비밀번호찾기 -->
+	<select id="select" parameterType="member" resultMap="memberResultMap">
+		SELECT MEMBER_NO, MEMBER_NAME, PASSWORD, PHONE_NO, EMAIL, JOIN_DATE
+		FROM MEMBER
+		<where>
+            <if test="memberNo != null">AND MEMBER_NO = #{memberNo}</if>
+            <if test="memberName != null">AND MEMBER_NAME = #{memberName}</if>
+            <if test="password != null">AND PASSWORD = #{password}</if>
+            <if test="phoneNo != null">AND PHONE_NO = #{phoneNo}</if>
+            <if test="email != null">AND EMAIL = #{email}</if>
+            <if test="joinDate != null">AND JOIN_DATE = #{joinDate}</if>
+       </where>
+	</select>
+	
+	<select id="list" resultMap="memberResultMap">
+		SELECT MEMBER_NO, MEMBER_NAME, PASSWORD, PHONE_NO, EMAIL, JOIN_DATE
+		FROM MEMBER
+	</select>
+	
+	<insert id="insert" parameterType="member">
+		INSERT INTO MEMBER
+			(MEMBER_NO, MEMBER_NAME, PASSWORD, PHONE_NO, EMAIL, JOIN_DATE)
+		VALUES
+			(#{memberNo}, #{memberName}, #{password}, #{phoneNo}, #{email}, SYSDATE)
+	</insert>
+	
+	<update id="update" parameterType="member">
+		UPDATE MEMBER SET MEMBER_NAME = #{memberName, jdbcType=VARCHAR}, PASSWORD = #{password, jdbcType=VARCHAR}, PHONE_NO = #{phoneNo, jdbcType=VARCHAR}, EMAIL = #{email, jdbcType=VARCHAR}
+		WHERE MEMBER_NO = #{memberNo, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="member">
+		DELETE FROM MEMBER
+		WHERE MEMBER_NO = #{memberNo, jdbcType=VARCHAR}
+	</delete>
+	
+</mapper>

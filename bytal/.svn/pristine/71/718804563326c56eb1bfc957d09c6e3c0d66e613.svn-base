@@ -1,0 +1,93 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>:::Bytal Web:::</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+<script src="/bootstrap/js/jquery.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+	<table width="100%" height="100%">
+		<tr height="20%">
+			<td colspan="2">
+				<%@include file="/WEB-INF/jsp/web/main/top.jsp"%>
+			</td>
+		</tr>
+		<tr>
+			<td width="20%" valign="top">
+				<%@include file="/WEB-INF/jsp/web/board/left.jsp"%>
+			</td>
+			<td align="center" style="padding:30px">
+				<h1>자전거 코스 추천 게시판</h1>
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th width="60%">제목</th>
+								<th width="20%">작성자</th>
+								<th width="20%">날짜</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:if test="${!empty listBoard}">
+								<c:forEach items="${listBoard}" var="board" varStatus="status">
+									<tr>
+										<td style="text-align: left;">
+											<a href="/bytal/board/course/viewBoard/${board.boardNo}">
+												<c:out value="${board.title}" />
+											</a>
+										</td>
+										<td style="text-align: left;">
+											<c:out value="${board.writer}" />
+										</td>
+										<td style="text-align: left;">
+											<c:out value="${board.writeDate}"/>
+										</td>
+									</tr>
+								</c:forEach>
+							</c:if>
+							<c:if test="${empty listBoard}">
+								<tr>
+									<td style="text-align: center;" colspan="7">목록이 존재하지 않습니다.</td>
+								</tr>
+							</c:if>
+						</tbody>
+					</table>
+					<c:out value="${navigator}" escapeXml="false"/><br/><br/>
+					<form id="form_search" method="post" class="form-inline">
+						<table>
+							<tr>
+								<td style="padding-bottom:20px">
+									<div class="col-xs-2">
+								        <select name="searchType" style="vertical-align: top;" class="form-control" >
+								            <option value="title" <c:if test="${board.searchType eq 'title'}">selected="selected"</c:if>>제목</option>
+								            <option value="content" <c:if test="${board.searchType eq 'content'}">selected="selected"</c:if>>내용</option>
+								            <option value="writer" <c:if test="${board.searchType eq 'writer'}">selected="selected"</c:if>>작성자</option>
+								        </select>
+							        </div>
+						        </td>
+						        <td style="padding-bottom:20px">
+							        <div class="col-xs-3">
+							        	<input type="text" name="searchKeyword" value="<c:out value='${board.searchKeyword}' />" size="15" class="form-control"/>
+							        </div>
+						        </td>
+						        <td style="padding-bottom:20px">
+						       		<input type="submit" value="SEARCH" onclick="goPage(1);" class="btn btn-success"/>
+						       	</td>
+					       	</tr>
+				       	</table>
+				    </form>
+			<a href="/bytal/board/course/addBoard">
+				<input type="button" value="글쓰기" class="btn btn-success">
+			</a>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

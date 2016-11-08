@@ -1,0 +1,18 @@
+package org.bytal.persistence;
+
+import java.util.List;
+
+import org.bytal.domain.Bicycle;
+
+public interface WebBicycleMapper {
+	public List<Bicycle> list(Bicycle bicycle);
+	public int count(Bicycle bicycle);
+	public Bicycle view(int bicycleNo);
+	public void edit(Bicycle bicycle);
+	public void insert(Bicycle bicycle);
+	public void delete(int bicycle);
+
+	
+	
+	
+}

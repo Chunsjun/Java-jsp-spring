@@ -1,0 +1,104 @@
+package org.bytal.presentation;
+
+import java.util.List;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.bytal.domain.Bicycle;
+import org.bytal.service.webService.WebBicycleService;
+import org.bytal.domain.PageInformation;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+@Controller
+@RequestMapping(value = "/bytal")
+public class WebBicycleController {
+	@Resource
+	private WebBicycleService webBicycleService;
+	
+	/*자전거 정보 메인 페이지*/
+	@RequestMapping(value = "/bicycle", method = RequestMethod.GET)
+	public String main(HttpSession session) throws Exception {
+		
+		return "/web/bicycle/introBicycle";
+	}
+	/*자전거 현황 리스트, 페이징*/
+	@RequestMapping(value = "/bicycle/listBicycle", method = {RequestMethod.GET, RequestMethod.POST})
+	public ModelAndView listBicycle(Bicycle bicycle,HttpServletRequest request) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/web/bicycle/listBicycle");
+		
+		/*자전거 현황 페이징*/
+		int totalItemCount = this.webBicycleService.count(bicycle);
+
+		PageInformation pageInformation = new PageInformation(request, totalItemCount);
+		modelAndView.addObject("pageNo", pageInformation.getPageNo());
+		modelAndView.addObject("pageItemCount", pageInformation.getPageItemCount());
+		modelAndView.addObject("navigator", pageInformation.getNavigator());
+
+		bicycle.setItemStartNo(pageInformation.getItemStartNo());
+		bicycle.setItemEndNo(pageInformation.getItemEndNo());
+
+		/*자전거 현황 리스트*/
+		List<Bicycle> listBicycle = this.webBicycleService.find(bicycle);
+		modelAndView.addObject("listBicycle", listBicycle); // 자전거 목록 전달
+		
+		
+		System.out.println(listBicycle);
+		return modelAndView;
+	}
+	
+	/*자전거 정보 수정 폼*/
+	@RequestMapping(value = "/bicycle/editBicycle/{bicycleNo}", method = RequestMethod.GET)
+	public ModelAndView editForm(@PathVariable (value = "bicycleNo")int bicycleNo) throws Exception {
+		
+		
+		ModelAndView modelAndView = new ModelAndView("/web/bicycle/editBicycle");
+		modelAndView.addObject("editInfo", this.webBicycleService.select(bicycleNo));
+		return modelAndView;
+	} 
+	/*자전거 정보 수정 처리*/
+	@RequestMapping(value = "/bicycle/editBicycle/{bicycleNo}", method = RequestMethod.POST)
+	public ModelAndView edit(Bicycle bicycle) throws Exception{
+		RedirectView redirectView = new RedirectView("/bytal/bicycle/listBicycle");
+		redirectView.setExposeModelAttributes(false);
+		
+		this.webBicycleService.edit(bicycle);
+		return new ModelAndView(redirectView);
+	}
+
+	/* 자전거 등록 폼 */
+	@RequestMapping(value = "/bicycle/addBicycle", method = RequestMethod.GET)
+	public String addBicycleForm() throws Exception {
+		return "/web/bicycle/addBicycle";
+	}
+	/* 자전거 등록 */
+	@RequestMapping(value = "/bicycle/addBicycle", method = RequestMethod.POST)
+	public ModelAndView cradleAdd(Bicycle bicycle, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/bicycle/listBicycle");
+		redirectView.setExposeModelAttributes(false);
+		
+		ModelAndView modelAndView = new ModelAndView(redirectView);
+		
+		bicycle.setBicycleType(request.getParameter("bicycleType"));
+		bicycle.setCost(Integer.parseInt(request.getParameter("cost")));
+		bicycle.setBicycleStatus(request.getParameter("bicycleStatus"));
+		bicycle.setCradleNo(Integer.parseInt(request.getParameter("cradleNo")));
+		this.webBicycleService.add(bicycle);
+		
+		return modelAndView;
+	}
+	/*자전거 정보 삭제 처리*/
+	@RequestMapping(value = "/bicycle/deleteBicycle/{bicycleNo}", method = RequestMethod.GET)
+	public ModelAndView removeForm(@PathVariable (value = "bicycleNo")int bicycleNo) throws Exception {
+		RedirectView redirectView = new RedirectView("/bytal/bicycle/listBicycle");
+		redirectView.setExposeModelAttributes(false);
+		
+		this.webBicycleService.remove(bicycleNo);
+		return new ModelAndView(redirectView);
+	}
+}

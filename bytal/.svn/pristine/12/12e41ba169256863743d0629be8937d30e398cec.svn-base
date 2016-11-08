@@ -1,0 +1,118 @@
+package org.bytal.presentation;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.bytal.domain.Bicycle;
+import org.bytal.domain.Rent;
+import org.bytal.service.deviceService.DeviceService;
+import org.bytal.service.webService.WebMemberService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+/*111*/
+@Controller
+@RequestMapping(value = "/return")
+public class ReturnController {
+	@Resource
+	private DeviceService deviceService;
+	@Resource
+	private WebMemberService webMemberService;
+	
+
+	/*메인 페이지 출력 */
+	@RequestMapping(value = "/main", method = RequestMethod.GET)
+	public String main(HttpSession session) throws Exception {
+		session.removeAttribute("rentAlert");
+		return "/device/main";
+	}
+	
+	/*반납 초기 페이지 출력 */
+	@RequestMapping(value = "/return", method = {RequestMethod.GET, RequestMethod.POST})
+	public String back() throws Exception {
+		return "/device/return/return";
+	}
+	
+	/* 대여정보 확인 처리  */
+	@RequestMapping(value = "/returnBicycleForm", method = RequestMethod.POST)
+	public ModelAndView returnBicycle(HttpSession session, HttpServletRequest request) throws Exception {
+		RedirectView redirectView = new RedirectView("/return/returnBicycle");
+		redirectView.setExposeModelAttributes(false);
+		
+		Rent rent = new Rent();
+		rent.setMemberNo(request.getParameter("memberNo"));
+				
+		Rent rentMember = deviceService.view(rent);
+		
+			if(rentMember != null){
+			Bicycle bicycle = new Bicycle();
+			bicycle.setBicycleNo(rentMember.getBicycleNo());
+			
+			Bicycle bicycle1 = deviceService.view(bicycle);
+			
+			session.setAttribute("rentNo", rentMember.getRentNo());
+			session.setAttribute("memberNo", rentMember.getMemberNo());
+			session.setAttribute("bicycleNo", rentMember.getBicycleNo());
+			session.setAttribute("rentDate", rentMember.getRentDate());
+			
+			session.setAttribute("returnDate", rentMember.getReturnDate());
+			session.setAttribute("userStatus", rentMember.getUserStatus());
+			session.setAttribute("bicycleType", bicycle1.getBicycleType());
+			session.setAttribute("cradleNo", bicycle1.getCradleNo());
+		}else{
+			session.setAttribute("rentAlert", "1");
+		}
+		return new ModelAndView(redirectView);
+	}
+	/*반납 정보 확인 페이지 출력 */
+	@RequestMapping(value = "/returnBicycle", method = {RequestMethod.GET, RequestMethod.POST})
+	public String returnBicycle() throws Exception {
+		return "/device/return/returnBicycle";
+	}
+	/* 반납 정보 입력 처리 */
+	@RequestMapping(value = "/deleteRecode", method = RequestMethod.POST)
+	public ModelAndView add(@RequestParam("rentNo") int rentNo, @RequestParam("bicycleNo") String bicycleNo)
+			throws Exception {
+		RedirectView redirectView = null;
+		try {
+			redirectView = new RedirectView("/return/logout");
+			redirectView.setExposeModelAttributes(false);
+
+			Rent rent = new Rent();
+			
+			rent.setRentNo(rentNo);
+			rent.setBicycleNo(Integer.parseInt(bicycleNo));
+			this.deviceService.edit(rent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return new ModelAndView(redirectView);
+	}
+	/* 로그아웃 처리 */
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout(HttpSession session) throws Exception {
+		session.removeAttribute("memberNo");
+		session.removeAttribute("bicycleNo");
+		session.removeAttribute("bicycleType");
+		session.removeAttribute("cradleNo");
+		session.removeAttribute("rentDate");
+		session.removeAttribute("returnDate");
+		session.removeAttribute("userStatus");
+		session.removeAttribute("bicycleType");
+		session.removeAttribute("bicycleStatus");
+		session.removeAttribute("rentAlert");
+		
+		return "/device/main";
+	}
+	/* 반납 완료 팝업 출력 */
+	@RequestMapping(value = "/returnPopUp", method =RequestMethod.GET)
+	public String selectPopUp() throws Exception {
+		return "/device/return/returnPopUp";
+
+	}
+}

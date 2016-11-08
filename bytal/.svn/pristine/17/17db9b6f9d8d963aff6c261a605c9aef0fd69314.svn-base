@@ -1,0 +1,8 @@
+package org.bytal.persistence;
+
+import org.bytal.domain.Rent;
+public interface RentMapper {
+	public void insert(Rent rent);
+	public Rent select(Rent	rent);
+	public void update(Rent rent);
+}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.BicycleMapper">
+	<resultMap type="bicycle" id="bicycleResultMap">
+		<id column="BICYCLE_NO" property="bicycleNo" />
+		<result column="BICYCLE_TYPE" property="bicycleType" />
+		<result column="COST" property="cost" />
+		<result column="BICYCLE_STATUS" property="bicycleStatus" />
+		<result column="CRADLE_NO" property="cradleNo"/>
+	</resultMap>
+	
+	<select id="list" parameterType="bicycle" resultMap="bicycleResultMap">
+		SELECT BICYCLE_NO, BICYCLE_TYPE, COST, BICYCLE_STATUS, CRADLE_NO 
+		FROM BICYCLE
+		
+		<where>
+			<if test="bicycleType != null">AND BICYCLE_TYPE = #{bicycleType} AND BICYCLE_STATUS =1</if>
+			<if test="bicycleType == null">AND BICYCLE_TYPE = 1 AND BICYCLE_STATUS =1</if>			
+			
+		</where>
+		
+	</select>
+	
+	<select id="select" parameterType="bicycle" resultMap="bicycleResultMap">
+		SELECT BICYCLE_NO, BICYCLE_TYPE, COST, BICYCLE_STATUS, CRADLE_NO
+		FROM BICYCLE
+		WHERE BICYCLE_NO = #{bicycleNo}
+	</select>
+	
+	<update id="update" parameterType="bicycle">
+		UPDATE BICYCLE SET 
+		    BICYCLE_STATUS = #{bicycleStatus, jdbcType=VARCHAR}
+		WHERE BICYCLE_NO = #{bicycleNo}
+	</update>
+	
+</mapper>

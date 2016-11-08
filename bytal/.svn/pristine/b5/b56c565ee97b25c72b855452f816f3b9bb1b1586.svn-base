@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.bytal.persistence.WebBicycleMapper">
+	<resultMap type="bicycle" id="bicycleResultMap">
+		<id column="BICYCLE_NO" property="bicycleNo" />
+		<result column="BICYCLE_TYPE" property="bicycleType" />
+		<result column="COST" property="cost" />
+		<result column="BICYCLE_STATUS" property="bicycleStatus" />
+		<result column="CRADLE_NO" property="cradleNo"/>
+	</resultMap>
+	
+   <sql id="selectSql">
+       SELECT ROWNUM RN, BICYCLE_NO, BICYCLE_TYPE, COST, BICYCLE_STATUS, CRADLE_NO
+        FROM BICYCLE
+   </sql>
+   
+   <sql id="whereSql">
+        <where>
+            <if test="bicycleNo > 0">
+                AND BICYCLE_NO = #{bicycleNo}
+            </if>
+           <!--   <if test="bicycleType == null">
+                AND BICYCLE_TYPE = 1
+            </if>-->
+            <if test="searchType == 'bicycleType' and searchKeyword != null and searchKeyword != ''">
+                AND LOWER(BICYCLE_TYPE) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'bicycleStatus' and searchKeyword != null and searchKeyword != ''">
+                AND LOWER(BICYCLE_STATUS) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'cradleNo' and searchKeyword != null and searchKeyword != ''">
+                AND LOWER(CRADLE_NO) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+        </where>
+   </sql>
+   	
+   	<select id="select" parameterType="bicycle" resultMap="bicycleResultMap">
+        <include refid="selectSql" />
+        <include refid="whereSql" />
+    </select>
+       
+	<select id="list" parameterType="bicycle" resultMap="bicycleResultMap">
+		 SELECT TB.* FROM (
+         <include refid="selectSql" />
+         <include refid="whereSql" />
+      ) TB
+      <where>
+            <if test="itemStartNo != null and itemStartNo != ''">
+             AND RN BETWEEN #{itemStartNo} AND #{itemEndNo}
+          </if>
+      </where>
+    </select>
+    
+     <select id="count" parameterType="bicycle" resultType="int">
+      SELECT COUNT(*) FROM (
+         <include refid="selectSql" />
+         <include refid="whereSql" />
+      ) TB
+    </select>
+
+	
+	<insert id="insert" parameterType="bicycle">
+	<selectKey keyColumn="BICYCLE_NO" keyProperty="bicycleNo" resultType="int" order="BEFORE">
+		SELECT SEQ_BICYCLE_NO.NEXTVAL FROM DUAL
+	</selectKey>
+		INSERT INTO BICYCLE
+			(BICYCLE_NO, BICYCLE_TYPE, COST, BICYCLE_STATUS, CRADLE_NO)
+		VALUES
+			(#{bicycleNo}, #{bicycleType}, #{cost}, 
+			 #{bicycleStatus}, #{cradleNo})
+	</insert>
+	<!-- 자전거  조회-->
+	<select id="view" parameterType="int" resultMap="bicycleResultMap">
+		SELECT * FROM BICYCLE WHERE BICYCLE_NO = #{bicycleNo}
+	</select>
+	<update id="edit" parameterType="bicycle">
+		UPDATE BICYCLE SET BICYCLE_STATUS = #{bicycleStatus}, CRADLE_NO = #{cradleNo}
+		WHERE BICYCLE_NO = #{bicycleNo}
+	</update>
+	
+	<delete id="delete" parameterType="bicycle">
+		DELETE FROM BICYCLE
+		WHERE BICYCLE_NO = #{bicycleNo}
+	</delete>
+</mapper>

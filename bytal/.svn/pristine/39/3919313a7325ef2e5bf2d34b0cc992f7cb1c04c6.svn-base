@@ -1,0 +1,229 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>:::Bytal Web:::</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+<script src="/bootstrap/js/jquery.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+</head>
+	<script type="text/javascript">
+		function remove(bicycleNo){
+			var no = bicycleNo;
+			var check = confirm("정말 	삭제하시겠습니까?");
+			if(check == true){
+				location.href = "/bytal/bicycle/deleteBicycle/"+no;
+			}else{
+				return;
+			}
+		}
+		function editAlertBox() {
+		    alert('대여 중인 자전거는 수정할 수 없습니다.');
+		  }
+		function deleteAlertBox() {
+		    alert('대여 중인 자전거는 삭제할 수 없습니다.');
+		  }
+		
+		function Activity(name, list){
+		    this.name = name;
+		    this.list = list;
+		}
+		
+		var acts = new Array();
+		acts[0] = new Activity('bicycleType', ['일반', '커플', '대여']);
+		acts[1] = new Activity('bicycleType', ['1', '2', '3']);
+		
+		acts[2] = new Activity('bicycleStatus', ['대여 가능', '대여 중', '수리 중']);
+		acts[3] = new Activity('bicycleStatus', ['1', '2', '3']);
+		
+		acts[4] = new Activity('cradleNo', ['1대여소', '2대여소']);
+		acts[5] = new Activity('cradleNo', ['1', '2']);
+
+		function updateList(str){
+		    var frm = document.form_search;
+		    var oriLen = frm.searchKeyword.length;
+		    var numActs;
+		
+		    for (var i = 0; i < acts.length; i = i + 2){
+		        if (str == acts[i].name) {
+		            numActs = acts[i].list.length;
+		            for (var j = 0; j < numActs; j++)
+		                frm.searchKeyword.options[j] = new Option(acts[i].list[j], acts[i + 1].list[j]);
+		            for (var j = numActs; j < oriLen; j++)
+						frm.searchKeyword.options[numActs] = null;
+		        }
+		    }
+		}
+	</script>
+<body>
+<div class="container">
+	<table width="100%" height="100%" class="table">
+		<tr height="20%">
+			<td colspan="2">
+				<%@include file="/WEB-INF/jsp/web/main/top.jsp"%>
+			</td>
+		</tr>
+		<tr>
+			<td width="20%">
+				<%@include file="/WEB-INF/jsp/web/bicycle/left.jsp"%>
+			</td>
+			<td align="center">
+				<h2 align="left">자전거 현황</h2>
+			<BR>
+ 
+				<table width="80%" style="text-align: right" class="table">
+					<tr>
+						<td align="left">
+							<form id="form_search" name="form_search" method="post"  class="form-inline">
+								
+									<div class="col-xs-4"> 
+										<div class="radio"> 
+										  <input type="radio" name="searchType" <c:if test="${bicycle.searchType eq 'bicycleType'}">checked="checked"</c:if>
+										  	 value="bicycleType" onclick="updateList(this.value)">종류 
+										</div>
+										<div class="radio">
+										  <input type="radio" name="searchType" <c:if test="${bicycle.searchType eq 'bicycleStatus'}">checked="checked"</c:if>
+										  	 value="bicycleStatus" onclick="updateList(this.value)">상태
+										</div>
+										<div class="radio">
+										  <input type="radio" name="searchType" <c:if test="${bicycle.searchType eq 'cradleNo'}">checked="checked"</c:if>
+										  	 value="cradleNo" onclick="updateList(this.value)">대여소 
+										</div>
+								 	</div>
+								 	
+								 	<div class="col-xs-3">
+										  <select name="searchKeyword" style="vertical-align: top;" class="form-control" >
+										  	 <option value="">====</option>
+										    <option value="1">일반</option>
+										    <option value="2">커플</option>
+										    <option value="3">고급</option>
+										 </select>
+								 	</div>
+										<input type="submit" value="SEARCH" onclick="goPage(1);" class="btn btn-default"/>
+							
+							</form>
+						</td>
+						
+						<td>
+							<c:if test="${sessionScope.memberNo eq 'admin'}">
+							<a href="/bytal/bicycle/addBicycle/"> 
+								<input type="button" value="자전거 등록" align="right" class="btn btn-success"/>
+							</a>
+							</c:if>
+						</td>
+					</tr> 
+				</table>
+				<table width="70%" height="50%" class="table table-hover">
+
+				<thead>
+					<tr>
+						<c:if test="${sessionScope.memberNo eq 'admin'}">
+							<td>NO</td>
+							<th style="width: 15%; text-align: center;">번호</th>
+							<th style="width: 15%; text-align: center;">종류</th>
+							<th style="width: 15%; text-align: center;">대여소</th>
+							<th style="width: 30%; text-align: center;">상태</th>
+							<th style="width: 12.5%; text-align: center;">수정</th>
+							<th style="width: 12.5%; text-align: center;">삭제</th>
+						</c:if>
+						<c:if test="${sessionScope.memberNo ne 'admin'}">
+							<td>NO</td>
+							<th style="width: 15%; text-align: center;">자전거 번호</th>
+							<th style="width: 20%; text-align: center;">자전거 종류</th>
+							<th style="width: 40%; text-align: center;">대여소</th>
+							<th style="width: 20%; text-align: center;">상태</th>
+							
+						</c:if>
+					</tr>
+				<thead>
+					<tbody>
+						<c:if test="${!empty listBicycle}">
+							<c:forEach items="${listBicycle}" var="bicycle" varStatus="status">
+								<tr>
+									<td style="text-align: center;">
+										<c:out value="${(pageNo - 1) * pageItemCount + status.count}" />
+									</td>
+									<td style="text-align: center;">
+										<c:out value="${bicycle.bicycleNo}"/>
+									</td>
+									<td style="text-align: center;">
+										<c:if test="${bicycle.bicycleType=='1'}">
+											일반
+										</c:if> 
+										<c:if test="${bicycle.bicycleType=='2'}">
+											커플
+										</c:if> 
+										<c:if test="${bicycle.bicycleType=='3'}">
+											고급
+										</c:if>
+									</td>
+									<td align=center>
+										<c:if test="${bicycle.cradleNo=='1'}">
+											1 대여소 <br>(본관)
+										</c:if> 
+										<c:if test="${bicycle.cradleNo=='2'}">
+											2 대여소 <br>(기숙사)
+										</c:if>
+										<c:if test="${bicycle.cradleNo=='3'}">
+											3 대여소
+										</c:if>
+										<c:if test="${bicycle.cradleNo=='4'}">
+											4 대여소
+										</c:if>
+										<c:if test="${bicycle.cradleNo=='5'}">
+											5 대여소
+										</c:if>
+									</td>
+									<td style="text-align: center;">
+										<c:if test="${bicycle.bicycleStatus=='1'}">
+										 <h4 style="color: blue;">대여 가능</h4>
+									</c:if>  
+										<c:if test="${bicycle.bicycleStatus=='2'}">
+										<h4 style="color: red;">대여 중</h4>
+									</c:if> <c:if test="${bicycle.bicycleStatus=='3'}">
+										<h4 style="color: olive;">수리 중</h4>
+									</c:if>
+								</td>
+									<c:if test="${sessionScope.memberNo eq 'admin'}">
+										<td align=center>
+											<c:if test="${bicycle.bicycleStatus=='1' ||bicycle.bicycleStatus=='3'}">
+												<a href="/bytal/bicycle/editBicycle/${bicycle.bicycleNo}">
+													<input type="button" value="수정" align="right" class="btn btn-warning">
+												</a>
+											</c:if>
+											<c:if test="${bicycle.bicycleStatus=='2'}">
+												<input type="button" value="수정" align="right" onclick="editAlertBox();" class="btn btn-warning">
+											</c:if>
+										</td>
+										<td align=center>
+										<c:if test="${bicycle.bicycleStatus=='1' ||bicycle.bicycleStatus=='3'}">
+										 <input type="button" value="삭제" onclick="javascript:remove(${bicycle.bicycleNo});" class="btn btn-danger">
+										</c:if>
+										<c:if test="${bicycle.bicycleStatus=='2'}">
+										 <input type="button" value="삭제" onclick="deleteAlertBox();" class="btn btn-danger">
+										</c:if>
+										</td>
+									</c:if>
+								</tr>
+							</c:forEach>
+					</c:if>
+					<c:if test="${empty listBicycle}">
+						<tr>
+							<td style="text-align: center;" colspan="7">
+										목록이 존재하지않습니다.
+							</td>
+						</tr>
+					</c:if>	
+				</tbody>		
+			</table > 
+		<c:out value="${navigator}" escapeXml="false"/><br/>
+	</td>
+		</tr>
+	</table>
+	</div>
+</body>
+</html>
