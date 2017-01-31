@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.graz.persistence.UserMapper">
+
+	<resultMap type="user" id="userResultMap">
+		<id column="USER_NO" property="userNo" />
+		<result column="ID" property="id" />
+		<result column="NAME" property="name" />
+		<result column="PASSWORD" property="password" />
+		<result column="E_MAIL" property="email"/>
+		<result column="P_NUMBER" property="pNumber"/>
+		<result column="STATUS" property="status"/>
+	</resultMap>
+	
+	<select id="select" parameterType="user" resultMap="userResultMap">
+		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
+		FROM GRAZ_USER
+		<where>
+            <if test="userNo != 0">AND USER_NO = #{userNo}</if>
+            <if test="id != null">AND ID = #{id}</if>
+            <if test="name != null">AND NAME = #{name}</if>
+            <if test="password != null">AND PASSWORD = #{password}</if>
+            <if test="email != null">AND E_MAIL = #{email}</if>
+            <if test="pNumber != null">AND P_NUMBER = #{pNumber}</if>
+            <if test="status != 0">AND STATUS = #{status}</if>
+       </where>
+	</select>
+	
+	<select id="viewUsers" resultMap="userResultMap">
+		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
+		FROM GRAZ_USER
+		ORDER BY USER_NO DESC
+	</select>
+	
+	<insert id="insert" parameterType="user">
+		INSERT INTO GRAZ_USER
+		(USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS)
+		VALUES
+		(GRAZ_USER_SEQ.NEXTVAL, #{id}, #{name},#{password}, #{email}, #{pNumber}, 1)
+	</insert>
+	
+	<update id="update" parameterType="user">
+		UPDATE GRAZ_USER
+		SET E_MAIL = #{email, jdbcType=VARCHAR}, P_NUMBER = #{pNumber, jdbcType=VARCHAR}
+		WHERE USER_NO = #{userNo}
+	</update>
+	
+	<update id="delete" parameterType="user">
+		UPDATE GRAZ_USER
+		SET STATUS = 0
+		WHERE USER_NO = #{userNo}
+	</update>
+	
+	<update id="reJoin" parameterType="int">
+		UPDATE GRAZ_USER
+		SET STATUS = 1
+		WHERE USER_NO = #{userNo}
+	</update>
+	
+	<delete id="completeDelete" parameterType="int">
+		DELETE FROM GRAZ_USER
+		WHERE USER_NO = #{userNo}
+	</delete>
+	
+</mapper>

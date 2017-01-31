@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.graz.persistence.BoardMapper">
+	<resultMap type="board" id="boardResultMap">
+		<id column="BOARD_NO" property="boardNo" />
+		<result column="BOARD_TITLE" property="title" />
+		<result column="BOARD_CONTENT" property="content" />
+		<result column="BOARD_WRITER" property="writer" />
+		<result column="BOARD_DATE" property="date" />
+		<result column="BOARD_VIEW" property="view" />
+	</resultMap>
+	
+	<sql id="selectSql">
+		SELECT 
+		BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER, BOARD_DATE, BOARD_VIEW
+		FROM GRAZ_BOARD
+	</sql>
+	
+	<sql id="whereSql">
+		<where>
+            <if test="boardNo != 0">AND BOARD_NO = #{boardNo}</if>
+            <if test="title != null">AND BOARD_TITLE = #{title}</if>
+            <if test="content != null">AND BOARD_CONTENT = #{content}</if>
+            <if test="writer != null">AND BOARD_WRITER = #{writer}</if>
+            <if test="date != null">AND BOARD_DATE = #{date}</if>
+       </where>
+	</sql>
+	
+	<sql id="searchSql">
+		<where>
+            <if test="searchType == 'title' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(BOARD_TITLE) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'content' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(BOARD_CONTENT) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+            <if test="searchType == 'writer' and searchKeyword != null and searchKeyword != ''">
+            	AND LOWER(BOARD_WRITER) LIKE ('%' || LOWER(#{searchKeyword}) || '%')
+            </if>
+		</where>
+	</sql>
+	
+	<sql id="viewUp">
+		UPDATE GRAZ_BOARD 
+		SET BOARD_VIEW = 
+		(SELECT BOARD_VIEW FROM GRAZ_BOARD WHERE BOARD_NO = #{boardNo}) + 1 
+		WHERE BOARD_NO = #{boardNo}
+	</sql>
+	
+	<select id="select" parameterType="board" resultMap="boardResultMap">
+		SELECT * FROM(
+    		SELECT ROWNUM RN, 
+    			   BOARD_NO, 
+    			   BOARD_TITLE, 
+    			   BOARD_CONTENT, 
+    			   BOARD_WRITER, 
+    			   BOARD_DATE,
+    			   BOARD_VIEW
+			FROM(SELECT * FROM GRAZ_BOARD 
+				<include refid="searchSql"/>
+				ORDER BY BOARD_NO DESC)
+				)WHERE RN BETWEEN #{startBoardNo} AND #{endBoardNo}
+	</select>
+	
+	<select id="view" parameterType="int" resultMap="boardResultMap">
+		<include refid="selectSql"/>
+		WHERE BOARD_NO = #{boardNo}
+	</select>
+	
+	<select id="count" resultType="int">
+		SELECT COUNT(*) FROM GRAZ_BOARD
+	</select>
+	
+	<insert id="insert" parameterType="board">
+		INSERT INTO GRAZ_BOARD
+			(BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER, BOARD_DATE, BOARD_VIEW)
+		VALUES
+			(GRAZ_BOARD_FREE_SEQ.NEXTVAL, 
+			#{title, jdbcType=VARCHAR}, 
+			#{content, jdbcType=VARCHAR}, 
+			#{writer, jdbcType=VARCHAR},
+			 SYSDATE, 0)
+	</insert>
+	
+	<update id="update" parameterType="board">
+		UPDATE GRAZ_BOARD
+		SET BOARD_TITLE = #{title}, BOARD_CONTENT = #{content}
+		WHERE BOARD_NO = #{boardNo}
+	</update>
+	
+	<delete id="delete" parameterType="board">
+		DELETE FROM GRAZ_BOARD
+		WHERE BOARD_NO = #{boardNo}
+	</delete>
+	
+	<update id="viewUp" parameterType="int">
+		<include refid="viewUp"/>
+	</update>
+
+</mapper>
