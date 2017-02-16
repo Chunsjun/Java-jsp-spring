@@ -28,7 +28,7 @@
 </head>
 <body>
 <div class="container">
-	<table height="100%" width="100%" border="0">
+	<table height="100%" width="100%">
 		<tr>
 			<td>
 				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -36,18 +36,18 @@
 		</tr>
 		<tr>
 			<td>
-				<div align="center">
+				<div align="center" style="padding: 10px;">
 					<table>
 						<tr>
-							<td colspan="2" align="center">
-								<c:out value="${sessionScope.user.name} 님."/>
+							<td colspan="2" align="center" style="font-weight: bolder; font-size: 30px;">
+								<c:out value="${sessionScope.user.name} 님. (${sessionScope.user.id})"/>
 							</td>
 						</tr>
 						<tr>
 							<th>
 								회원번호 : 
 							</th>
-							<td align="center">
+							<td align="center" style="padding: 10px;">
 								<c:out value="${sessionScope.user.userNo}"/>
 							</td>
 						</tr>
@@ -55,7 +55,7 @@
 							<th>
 								E-MAIL : 
 							</th>
-							<td align="center">
+							<td align="center" style="padding: 10px;">
 								<c:out value="${sessionScope.user.email}"/>
 							</td>
 						</tr>
@@ -63,7 +63,7 @@
 							<th>
 								PHONE-NUMBER : 
 							</th>
-							<td align="center">
+							<td align="center" style="padding: 10px;">
 								<c:out value="${sessionScope.user.pNumber}"/>
 							</td>
 						</tr>

@@ -45,10 +45,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td width="20%" align="center">
-				<%@include file="/WEB-INF/jsp/board/left.jsp"%>
-			</td>
-			<td align="center" style="padding:30px">
+			<td align="center">
 				<h1>자유 게시판</h1>
 				<form name="updateBoard" action="/graz/board/free/update/${board.boardNo}" method="post" >
 				<table width="70%" height="50%" align="center" class="table">

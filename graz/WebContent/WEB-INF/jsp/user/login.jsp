@@ -12,8 +12,19 @@
 <script type="text/javascript">
 	function login(){
 		var form = document.loginForm;
+		if(form.id.value == "") {  //form에 있는 memberNo 값이 없을 때
+			alert("아이디를 입력해주세요");  //경고창 띄움
+			form.id.focus();  //form에 있는 memberNo 위치로 이동
+			return;
+		}
+		if(form.password.value == "") {
+			alert("비밀번호를 적어주세요");
+			form.password.focus();
+			return;
+		}
 		form.submit();
 	}
+	
 	function findPop(){
 		var url = "/graz/find"
 		var option = "width=370, height=360, resizable=no, scrollbars=no, status=no;";
@@ -37,6 +48,7 @@
 			<td>
 				<div align="center">
 					<form action="/graz/login" method=post name="loginForm" class="form-signin">
+					<h2 class="form-signin-heading">Please sign in</h2>
 					<table border="0">
 						<tr>
 							<td>
@@ -59,9 +71,10 @@
 								<a href="join" style="padding: 10px">
 									Join
 								</a>
-								<a href="javascript:findPop();">
 									Find ID/PW
-								</a>			
+								<!-- <a href="javascript:findPop();">
+									Find ID/PW
+								</a> -->
 							</td>
 						</tr>
 					</table>

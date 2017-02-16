@@ -13,18 +13,22 @@
 		<result column="STATUS" property="status"/>
 	</resultMap>
 	
+	<sql id="whereSql">
+		<where>
+			<if test="userNo != 0">AND USER_NO = #{userNo}</if>
+            <if test="id != null and id != ''">AND ID = #{id}</if>
+            <if test="name != null and name != ''">AND NAME = #{name}</if>
+            <if test="password != null and password != ''">AND PASSWORD = #{password}</if>
+            <if test="email != null and email != ''">AND E_MAIL = #{email}</if>
+            <if test="pNumber != null and pNumber != ''">AND P_NUMBER = #{pNumber}</if>
+            <if test="status != 0">AND STATUS = #{status}</if>
+		</where>
+	</sql>
+	
 	<select id="select" parameterType="user" resultMap="userResultMap">
 		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
 		FROM GRAZ_USER
-		<where>
-            <if test="userNo != 0">AND USER_NO = #{userNo}</if>
-            <if test="id != null">AND ID = #{id}</if>
-            <if test="name != null">AND NAME = #{name}</if>
-            <if test="password != null">AND PASSWORD = #{password}</if>
-            <if test="email != null">AND E_MAIL = #{email}</if>
-            <if test="pNumber != null">AND P_NUMBER = #{pNumber}</if>
-            <if test="status != 0">AND STATUS = #{status}</if>
-       </where>
+		<include refid="whereSql"/>
 	</select>
 	
 	<select id="viewUsers" resultMap="userResultMap">

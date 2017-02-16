@@ -9,6 +9,14 @@
 		<result column="BOARD_WRITER" property="writer" />
 		<result column="BOARD_DATE" property="date" />
 		<result column="BOARD_VIEW" property="view" />
+		<result column="REVIEW_COUNT" property="reviewCount" />
+	</resultMap>
+	<resultMap type="review" id="reviewResultMap">
+		<id column="REVIEW_NO" property="reviewNo" />
+		<result column="BOARD_NO" property="boardNo" />
+		<result column="REVIEW_WRITER" property="reviewWriter" />
+		<result column="REVIEW_CONTENT" property="reviewContent" />
+		<result column="REVIEW_DATE" property="reviewDate" />
 	</resultMap>
 	
 	<sql id="selectSql">
@@ -16,7 +24,6 @@
 		BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER, BOARD_DATE, BOARD_VIEW
 		FROM GRAZ_BOARD
 	</sql>
-	
 	<sql id="whereSql">
 		<where>
             <if test="boardNo != 0">AND BOARD_NO = #{boardNo}</if>
@@ -26,7 +33,6 @@
             <if test="date != null">AND BOARD_DATE = #{date}</if>
        </where>
 	</sql>
-	
 	<sql id="searchSql">
 		<where>
             <if test="searchType == 'title' and searchKeyword != null and searchKeyword != ''">
@@ -40,36 +46,47 @@
             </if>
 		</where>
 	</sql>
-	
 	<sql id="viewUp">
 		UPDATE GRAZ_BOARD 
 		SET BOARD_VIEW = 
 		(SELECT BOARD_VIEW FROM GRAZ_BOARD WHERE BOARD_NO = #{boardNo}) + 1 
 		WHERE BOARD_NO = #{boardNo}
 	</sql>
+	<sql id="boardSql">
+		BOARD_NO,BOARD_TITLE,BOARD_CONTENT,BOARD_WRITER,BOARD_DATE,BOARD_VIEW
+	</sql>
 	
 	<select id="select" parameterType="board" resultMap="boardResultMap">
-		SELECT * FROM(
-    		SELECT ROWNUM RN, 
-    			   BOARD_NO, 
-    			   BOARD_TITLE, 
-    			   BOARD_CONTENT, 
-    			   BOARD_WRITER, 
-    			   BOARD_DATE,
-    			   BOARD_VIEW
-			FROM(SELECT * FROM GRAZ_BOARD 
-				<include refid="searchSql"/>
-				ORDER BY BOARD_NO DESC)
-				)WHERE RN BETWEEN #{startBoardNo} AND #{endBoardNo}
+		SELECT * FROM
+			(SELECT ROWNUM RN,<include refid="boardSql"/>,REVIEW_COUNT	FROM
+				(SELECT <include refid="boardSql"/>,
+				(SELECT COUNT(*) FROM GRAZ_REVIEW WHERE GRAZ_BOARD.BOARD_NO = GRAZ_REVIEW.BOARD_NO)
+					AS REVIEW_COUNT	
+			FROM GRAZ_BOARD <include refid="searchSql"/>ORDER BY BOARD_NO DESC))
+		<where>
+			<!-- <if test="startBoardNo != null and startBoardNo != ''">
+				RN BETWEEN #{startBoardNo} AND #{endBoardNo}
+			</if> -->
+			<if test="itemStartNo != null and itemStartNo != ''">
+				AND RN BETWEEN #{itemStartNo} AND #{itemEndNo}
+			</if>
+		</where>
 	</select>
-	
 	<select id="view" parameterType="int" resultMap="boardResultMap">
 		<include refid="selectSql"/>
 		WHERE BOARD_NO = #{boardNo}
 	</select>
-	
 	<select id="count" resultType="int">
 		SELECT COUNT(*) FROM GRAZ_BOARD
+	</select>
+	<select id="viewReview" parameterType="int" resultMap="reviewResultMap">
+		SELECT * FROM 
+		(SELECT * FROM GRAZ_REVIEW ORDER BY REVIEW_NO)
+		WHERE BOARD_NO = #{boardNo}
+	</select>
+	<select id="reviewCount" parameterType="int" resultType="int">
+		SELECT COUNT(*) FROM GRAZ_REVIEW
+		WHERE BOARD_NO = #{boardNo}
 	</select>
 	
 	<insert id="insert" parameterType="board">
@@ -82,20 +99,32 @@
 			#{writer, jdbcType=VARCHAR},
 			 SYSDATE, 0)
 	</insert>
+	<insert id="review" parameterType="review">
+		INSERT INTO GRAZ_REVIEW
+			(REVIEW_NO, BOARD_NO, REVIEW_WRITER, REVIEW_CONTENT, REVIEW_DATE)
+		VALUES
+			(GRAZ_REVIEW_SEQ.NEXTVAL,
+			#{boardNo},
+			#{reviewWriter, jdbcType=VARCHAR},
+			#{reviewContent, jdbcType=VARCHAR}, 
+			 SYSDATE)
+	</insert>
 	
 	<update id="update" parameterType="board">
 		UPDATE GRAZ_BOARD
 		SET BOARD_TITLE = #{title}, BOARD_CONTENT = #{content}
 		WHERE BOARD_NO = #{boardNo}
 	</update>
+	<update id="viewUp" parameterType="int">
+		<include refid="viewUp"/>
+	</update>
 	
 	<delete id="delete" parameterType="board">
 		DELETE FROM GRAZ_BOARD
 		WHERE BOARD_NO = #{boardNo}
 	</delete>
-	
-	<update id="viewUp" parameterType="int">
-		<include refid="viewUp"/>
-	</update>
-
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM GRAZ_REVIEW
+		WHERE REVIEW_NO =#{reviewNo}
+	</delete>
 </mapper>

@@ -47,4 +47,9 @@ public class MainController {
 	public String findIdPw(){
 		return "/user/find";
 	}
+	
+	@RequestMapping(value ="/menu", method = RequestMethod.GET)
+	public String menu(){
+		return "/menu/menu";
+	}
 }

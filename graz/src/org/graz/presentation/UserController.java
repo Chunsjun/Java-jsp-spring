@@ -133,4 +133,23 @@ public class UserController {
 		
 		return new ModelAndView(redirectView);
 	}
+	
+	@RequestMapping(value = "/check", method = RequestMethod.GET)
+	public ModelAndView checkId(User user){
+		
+		ModelAndView modelAndView = new ModelAndView("/user/join");
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		User result = userService.view(user);
+		if(result == null){
+			stringBuffer.append("alert('"+user.getId()+"은(는) 사용가능 합니다.'"+");")
+						.append("window.close();").append("window.opener.joinBtnUnDisabled();");
+			modelAndView.addObject("resultCheckId", stringBuffer.toString());
+		}else{
+			stringBuffer.append("alert('"+user.getId()+"은(는) 사용중입니다.'"+");")
+						.append("window.close();").append("window.opener.joinBtnDisabled();");
+			modelAndView.addObject("resultCheckId", stringBuffer.toString());
+		}
+		return modelAndView;
+	}
 }

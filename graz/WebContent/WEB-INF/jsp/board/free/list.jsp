@@ -21,31 +21,42 @@
 		</td>
 	</tr>
 	<tr>
-	<c:if test="${isMobile eq false}">
+	<%-- <c:if test="${isMobile eq false}">
 		<td width="20%" align="center">
 			<%@include file="/WEB-INF/jsp/board/left.jsp"%>
 		</td>
-	</c:if>
-		<td align="center" style="padding:30px">
-			<h1>자유 게시판</h1>
+	</c:if> --%>
+		<td align="center">
+			<h1>게시판</h1>
 			<table class="table table-hover">
 				<thead>
 					<tr>
-						<th width="60%">제목</th>
-						<th width="20%">작성자</th>
+						<c:if test="${isMobile eq false}">
+							<th width="10%">글번호</th>
+						</c:if>
+						<th width="50%">제목</th>
+						<th width="15%">작성자</th>
 						<c:if test="${isMobile eq false}">
 							<th width="10%">작성일</th>
 						</c:if>
-						<th width="10%">조회수</th>
+						<th width="15%">조회수</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:if test="${!empty listBoard}">
 						<c:forEach items="${listBoard}" var="board" varStatus="status">
 							<tr>
+							<c:if test="${isMobile eq false}">
+								<td>
+									<c:out value="${board.boardNo}"/>
+								</td>
+							</c:if>
 								<td style="text-align: left; padding: 10px;">
 									<a href="/graz/board/free/view/${board.boardNo}">
 										<c:out value="${board.title}" />
+										<c:if test="${board.reviewCount != 0}">
+											<c:out value="(${board.reviewCount})"/>
+										</c:if>
 									</a>
 								</td>
 								<td style="text-align: left;">
@@ -57,18 +68,18 @@
 									</td>
 								</c:if>
 								<td style="text-align: center;">
-									<c:out value="${board.view }"/>
+									<c:out value="${board.view}"/>
 								</td>
 							</tr>
 						</c:forEach>
 					</c:if>
 					<c:if test="${empty listBoard}">
 						<tr>
-							<td style="text-align: center;" colspan="4">목록이 존재하지 않습니다.</td>
+							<td style="text-align: center;" colspan="5">목록이 존재하지 않습니다.</td>
 						</tr>
 					</c:if>
 						<tr>
-							<td colspan="4" align="center">
+							<td colspan="5" align="center">
 								<c:out value="${navigator}" escapeXml="false"/>
 							</td>
 						</tr>
@@ -78,23 +89,17 @@
 				<table>
 					<tr>
 						<td>
-							<div class="col-md-4">
-								<select name="searchType" style="vertical-align: top;" class="form-control" >
-									<option value="title" <c:if test="${board.searchType eq 'title'}">selected="selected"</c:if>>제목</option>
-									<option value="content" <c:if test="${board.searchType eq 'content'}">selected="selected"</c:if>>내용</option>
-									<option value="writer" <c:if test="${board.searchType eq 'writer'}">selected="selected"</c:if>>작성자</option>
-								</select>
-							</div>
+							<select name="searchType" style="vertical-align: top;" class="form-control" >
+								<option value="title" <c:if test="${board.searchType eq 'title'}">selected="selected"</c:if>>제목</option>
+								<option value="content" <c:if test="${board.searchType eq 'content'}">selected="selected"</c:if>>내용</option>
+								<option value="writer" <c:if test="${board.searchType eq 'writer'}">selected="selected"</c:if>>작성자</option>
+							</select>
 						</td>
 						<td>
-							<div class="col-md-4">
-								<input type="text" name="searchKeyword" value="<c:out value='${board.searchKeyword}' />" size="15" class="form-control"/>
-							</div>
+							<input type="text" name="searchKeyword" value="<c:out value='${board.searchKeyword}' />" size="15" class="form-control"/>
 						</td>
 						<td>
-							<div class="col-md-4">
-								<input type="submit" value="SEARCH" onclick="goPage(1);" class="btn btn-default"/>
-							</div>
+							<input type="submit" value="SEARCH" onclick="goPage(1);" class="btn btn-default"/>
 						</td>
 					</tr>
 					<tr>
@@ -108,6 +113,8 @@
 				</table>
 			</form>
 		</table>
+	<hr>
+	개발문의사항 : <a href="https://open.kakao.com/o/gNFREls">오픈카톡</a><p>
 	</div>
 </body>
 </html>

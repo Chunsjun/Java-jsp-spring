@@ -4,29 +4,24 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Main</title>
+<title>Menu</title>
 </head>
 <body>
 <div class="container">
 	<table height="100%" width="100%">
 		<tr>
 			<td>
-				<%@include file="top.jsp"%>
+				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<div align="center">
-					<h1>Coffee Graz</h1>
-					<img src="/img/graz_coffee.jpg" align="middle" width="80%" height="70%" class="img-responsive img-rounded">
-				</div>
+				메뉴소개입니다.
 			</td>
 		</tr>
 	</table>
 <hr>
-	개발문의사항 : <a href="https://open.kakao.com/o/gNFREls">오픈카톡</a>
-	<div align="right">개발자 : 천성준</div>
-	<p>
+	개발문의사항 : <a href="https://open.kakao.com/o/gNFREls">오픈카톡</a><p>
 </div>
 </body>
 </html>

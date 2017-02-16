@@ -35,15 +35,15 @@
 				<form action="/graz/userInfoUpdate" method="post" name="updateForm">
 					<table>
 						<tr>
-							<th colspan="2">
-								<c:out value="${sessionScope.user.name} 님."/>
-							</th>
+							<td colspan="2" align="center" style="font-weight: bolder; font-size: 30px;">
+								<c:out value="${sessionScope.user.name} 님. (${sessionScope.user.id})"/>
+							</td>
 						</tr>
 						<tr>
 							<th>
 								회원번호 : 
 							</th>
-							<td align="center">
+							<td align="center" style="padding: 10px;">
 								<c:out value="${sessionScope.user.userNo}"/>
 							</td>
 						</tr>
@@ -51,22 +51,22 @@
 							<th>
 								E-MAIL : 
 							</th>
-							<td align="center">
-								<input type="text" name="email" value='<c:out value="${sessionScope.user.email}"/>'>
+							<td align="center" style="padding: 10px;">
+								<input type="text" name="email" value='<c:out value="${sessionScope.user.email}"/>' class="form-control" maxlength="30">
 							</td>
 						</tr>
 						<tr>
 							<th>
 								PHONE-NUMBER : 
 							</th>
-							<td align="center">
-								<input type="text" name="pNumber" value='<c:out value="${sessionScope.user.pNumber}"/>'>
+							<td align="center" style="padding: 10px;">
+								<input type="text" name="pNumber" value='<c:out value="${sessionScope.user.pNumber}"/>' class="form-control" maxlength="11">
 							</td>
 						</tr>
 					</table>
 				</form>
-					<input type="button" value="Complete" onclick="javascript:update();">
-					<input type="button" value="Cancel" onclick="javascript:cancel();">
+					<input type="button" value="Complete" onclick="javascript:update();" class="btn btn-default">
+					<input type="button" value="Cancel" onclick="javascript:cancel();" class="btn btn-danger">
 				</div>
 			</td>
 		</tr>

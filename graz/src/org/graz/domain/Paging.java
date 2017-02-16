@@ -3,8 +3,10 @@ package org.graz.domain;
 import java.io.Serializable;
 
 public class Paging implements Serializable{
-	private int startBoardNo;
-	private int endBoardNo;
+	private static final long serialVersionUID = 872779774172689012L;
+	
+	private int itemStartNo;
+	private int itemEndNo;
 	private String searchType;
 	private String searchKeyword;
 	
@@ -24,28 +26,28 @@ public class Paging implements Serializable{
 		this.searchKeyword = searchKeyword;
 	}
 
-	public Paging(int startBoardNo, int endBoardNo){
-		this.startBoardNo = startBoardNo;
-		this.endBoardNo = endBoardNo;
+	public Paging(int itemStartNo, int itemEndNo){
+		this.itemStartNo = itemStartNo;
+		this.itemEndNo = itemEndNo;
 	}
 	
 	public Paging(){
 	}
 
-	public int getStartBoardNo() {
-		return startBoardNo;
+	public int getItemStartNo() {
+		return itemStartNo;
 	}
 
-	public void setStartBoardNo(int startBoardNo) {
-		this.startBoardNo = startBoardNo;
+	public void setItemStartNo(int itemStartNo) {
+		this.itemStartNo = itemStartNo;
 	}
 
-	public int getEndBoardNo() {
-		return endBoardNo;
+	public int getItemEndNo() {
+		return itemEndNo;
 	}
 
-	public void setEndBoardNo(int endBoardNo) {
-		this.endBoardNo = endBoardNo;
+	public void setItemEndNo(int endBoardNo) {
+		this.itemEndNo = endBoardNo;
 	}
 	
 }

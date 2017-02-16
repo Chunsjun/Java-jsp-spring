@@ -3,26 +3,36 @@ package org.graz.domain;
 import java.io.Serializable;
 import java.sql.Date;
 
-public class Board extends Paging implements Serializable{
+public class Board extends Paging implements Serializable {
 	private int boardNo;
 	private String title;
 	private String content;
 	private String writer;
 	private Date date;
 	private int view;
-	
-	public Board(int boardNo, String title, String content,String writer, Date date, int view){
+	private int reviewCount;
+
+	public Board(int boardNo, String title, String content, String writer, Date date, int view, int reviewCount) {
 		this.boardNo = boardNo;
 		this.title = title;
 		this.content = content;
 		this.writer = writer;
 		this.date = date;
 		this.view = view;
+		this.reviewCount = reviewCount;
+	}
+
+	public Board() {
 	}
 	
-	public Board(){
+	public int getReviewCount() {
+		return reviewCount;
 	}
 	
+	public void setReviewCount(int reviewCount) {
+		this.reviewCount = reviewCount;
+	}
+
 	public int getView() {
 		return view;
 	}

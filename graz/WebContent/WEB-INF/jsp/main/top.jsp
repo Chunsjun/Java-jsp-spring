@@ -20,18 +20,16 @@
 		<c:choose>
 			<c:when test="${sessionScope.user == null}">
 				<td style="padding: 10px;">
+				<div class="btn-group btn-group-justified">
 					<a class="btn btn-default" href="/graz/login">Login</a>
-				</td>
-				<td style="padding: 10px;">
 					<a class="btn btn-default" href="/graz/join">Join</a>
+				</div>
 				</td>
 			</c:when>
 			<c:otherwise>
 				<td style="padding: 10px;">
-					<a href="/graz/userInfo">
-						<c:out value="${sessionScope.user.name}"/>
-					</a>
-						님 환영합니다.
+					<a href="/graz/userInfo"><c:out value="${sessionScope.user.name}"/></a>
+					님 환영합니다.
 				</td>
 				<td style="padding: 10px;">
 					<input type="button" value="Logout" onclick="javascript:logout();"
@@ -44,13 +42,16 @@
 </div>
 <div class="nav nav-tabs" align="center">
 	<table>
-		<tr><td style="padding: 10px;">
-			<a href="/graz/main">Main</a>
-		</td><td style="padding: 10px;">
-			<a href="/graz/board/free">FreeBoard</a>
-		</td><td style="padding: 10px;">
-			<a href="/graz/info">Info</a>
-		</td></tr>
+		<tr>
+			<td style="padding: 8px;">
+				<div class="btn-group btn-group-justified">
+					<a href="/graz/main" class="btn btn-default">Main</a>
+					<a href="/graz/menu" class="btn btn-default">Menu</a>
+					<a href="/graz/board/free" class="btn btn-default">Board</a>
+					<a href="/graz/info" class="btn btn-default">Info</a>
+				</div>
+			</td>
+		</tr>
 	</table>
 </div>
 
