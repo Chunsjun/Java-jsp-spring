@@ -5,8 +5,8 @@
 <html>
 <script type="text/javascript">
 	function backList() {
-		location.href = "/graz/board/free";		
-		/* history.back(); */
+		/* location.href = "/graz/board/free";	 */	
+		history.back();
 	}
 	function update(boardNo) {
 		location.href = "/graz/board/free/update/"+boardNo;

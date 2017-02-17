@@ -1,5 +1,6 @@
 package org.graz.presentation;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 @Controller
 @RequestMapping(value = "/graz/board")
 public class BoardController {
@@ -25,6 +29,7 @@ public class BoardController {
 	@Resource
 	private BoardService boardService;
 
+	// 자유게시판 목록 호출
 	@RequestMapping(value = "/free")
 	public ModelAndView boardList(Board board, HttpServletRequest request) {
 
@@ -46,19 +51,31 @@ public class BoardController {
 		return modelAndView;
 	}
 
+	// 자유게시판 글쓰기&파일업로드 로직
 	@RequestMapping(value = "/free/write", method = RequestMethod.POST)
-	public ModelAndView boardWrite(Board board, User user, HttpSession session, HttpServletRequest request) {
+	public ModelAndView boardWrite(Board board, User user, HttpSession session, HttpServletRequest request) throws IOException {
 
 		RedirectView redirectView = new RedirectView("/graz/board/free");
 		redirectView.setExposeModelAttributes(false);
-
+		
+		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
+		int sizeLimit = 1024*1024*15; // 파일크기 15MB로 제한
+		String savePath = request.getServletContext().getRealPath("files"); // 경로 C:\WorkSpace\graz\WebContent\files 를 말한다
+		MultipartRequest multi = new MultipartRequest(request, savePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
+		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
+		
 		user = (User) session.getAttribute("user");
 		board.setWriter(user.getName());
-
+		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
+		board.setTitle(multi.getParameter("title"));
+		board.setContent(multi.getParameter("content"));
+		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
+		
 		this.boardService.write(board);
 		return new ModelAndView(redirectView);
 	}
 
+	// 자유게시판 게시글 디테일뷰
 	@RequestMapping(value = "/free/view/{boardNo}", method = RequestMethod.GET)
 	public ModelAndView viewFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
 
@@ -84,6 +101,7 @@ public class BoardController {
 		return modelAndView;
 	}
 
+	// 자유게시판 게시글 업데이트 폼
 	@RequestMapping(value = "/free/update/{boardNo}", method = RequestMethod.GET)
 	public ModelAndView updateFreeBoardForm(@PathVariable int boardNo, Board board) throws Exception {
 
@@ -101,6 +119,7 @@ public class BoardController {
 		return modelAndView;
 	}
 
+	// 자유게시판 게시글 업데이트 처리로직
 	@RequestMapping(value = "/free/update/{boardNo}", method = RequestMethod.POST)
 	public ModelAndView updateFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
 		ModelAndView modelAndView = new ModelAndView("/board/free/view");
@@ -122,6 +141,7 @@ public class BoardController {
 		return modelAndView;
 	}
 
+	// 자유게시판 게시글 삭제 로직
 	@RequestMapping(value = "/free/delete/{boardNo}", method = RequestMethod.GET)
 	public ModelAndView deleteFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
 
@@ -133,7 +153,8 @@ public class BoardController {
 
 		return new ModelAndView(redirectView);
 	}
-
+	
+	// 자유게시판 게시글에 대한 댓글 등록 로직
 	@RequestMapping(value = "/free/review/{boardNo}", method = RequestMethod.POST)
 	public ModelAndView reviewWriter(@PathVariable int boardNo, Review review, HttpSession session) throws Exception {
 
@@ -141,6 +162,8 @@ public class BoardController {
 		redirectView.setExposeModelAttributes(false);
 
 		User user = (User) session.getAttribute("user");
+		
+		// 댓글창이 비어있으면 데이터를 등록 처리하지 않는다
 		if (review.getReviewContent().equals("") || review.getReviewContent().equals("")) {
 			return new ModelAndView(redirectView);
 		} else {
@@ -151,6 +174,7 @@ public class BoardController {
 		}
 	}
 
+	// 자유게시판 게시글 댓글 삭제 로직
 	@RequestMapping(value = "/free/review/delete/{boardNo}/{reviewNo}")
 	public ModelAndView reviewDelete(@PathVariable int boardNo, @PathVariable int reviewNo) {
 
@@ -162,7 +186,7 @@ public class BoardController {
 		return new ModelAndView(redirectView);
 	}
 
-	// 모바일 접속 확인 메소드
+	// 모바일 접속 확인 메소드 return boolean
 	private boolean isMobile(HttpServletRequest request) {
 		String userAgent = request.getHeader("user-agent");
 		boolean mobile1 = userAgent.matches(

@@ -25,7 +25,6 @@
 	</table>
 <hr>
 	개발문의사항 : <a href="https://open.kakao.com/o/gNFREls">오픈카톡</a>
-	<div align="right">개발자 : 천성준</div>
 	<p>
 </div>
 </body>

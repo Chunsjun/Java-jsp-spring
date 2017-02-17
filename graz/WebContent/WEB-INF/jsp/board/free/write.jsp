@@ -42,7 +42,8 @@
 		<tr>
 			<td align="center">
 				<h1>자유 게시판</h1>
-				<form name="writeBoard" action="/graz/board/free/write" method="post" >
+		<!-- enctype="multipart/form-data"을 폼에 정의했을경우 action으로 전해지는 데이터가 request에 담기지 않는다. 대신 MultipartRequest 메소드를 사용하여 데이터 수신. -->
+				<form name="writeBoard" action="/graz/board/free/write" method="post" enctype="multipart/form-data">
 				<table width="70%" height="50%" align="center" class="table">
 					<thead>
 						<tr>
@@ -70,6 +71,11 @@
 							</th>
 							<td>
 								<textarea rows="15" name="content" class="form-control" placeholder="(최대500자)"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<input type="file" name="testFile">
 							</td>
 						</tr>
 						<tr>

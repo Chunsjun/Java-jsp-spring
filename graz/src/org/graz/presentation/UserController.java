@@ -19,6 +19,7 @@ public class UserController {
 	@Resource
 	private UserService userService;
 	
+	// 로그인 처리 로직
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ModelAndView login(User user, HttpSession session) throws Exception{
 		
@@ -26,6 +27,7 @@ public class UserController {
 		redirectView.setExposeModelAttributes(false);
 		
 		User loginUser = userService.view(user);
+		// 로그인 한 정보가 유효한지 검증후 세션 등록
 		if(loginUser != null && loginUser.getStatus() != 0){
 			session.setAttribute("user", loginUser);
 			return new ModelAndView(redirectView);
@@ -40,6 +42,7 @@ public class UserController {
 		}
 	}
 	
+	// 로그아웃 처리 로직
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public ModelAndView logout(HttpSession session){
 
@@ -51,6 +54,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 회원가입 처리 로직
 	@RequestMapping(value = "/join", method = RequestMethod.POST)
 	public ModelAndView join(User user){
 		
@@ -62,6 +66,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 회원 정보 수정 처리 로직
 	@RequestMapping(value = "/userInfoUpdate", method = RequestMethod.POST)
 	public ModelAndView userInfoUpdate(User user, HttpSession session){
 		
@@ -79,6 +84,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 회원 탈퇴 처리 로직 - 실제로 데이터는 삭제되지 않고 status 값이 1 -> 0 으로 바뀐다.
 	@RequestMapping(value = "/userExit")
 	public ModelAndView userExit(User user, HttpSession session){
 		
@@ -94,6 +100,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 관리자 전용 회원정보 리스트 출력 로직
 	@RequestMapping(value = "/viewUsers", method = RequestMethod.GET)
 	public ModelAndView usersView(){
 		
@@ -103,6 +110,7 @@ public class UserController {
 		return modelAndView;
 	}
 	
+	// 관리자 전용 회원탈퇴 처리 로직
 	@RequestMapping(value = "/usersOut/{userNo}", method = RequestMethod.GET)
 	public ModelAndView usersOut(@PathVariable(value = "userNo")int userNo, User user){
 		RedirectView redirectView = new RedirectView("/graz/viewUsers");
@@ -114,6 +122,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 관리자 전용 회원복귀 처리 로직
 	@RequestMapping(value = "/usersIn/{userNo}", method = RequestMethod.GET)
 	public ModelAndView usersIn(@PathVariable(value = "userNo")int userNo){
 		RedirectView redirectView = new RedirectView("/graz/viewUsers");
@@ -124,6 +133,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 관리자 전용 회원 영구삭제 처리로직
 	@RequestMapping(value = "/deleteUser/{userNo}", method = RequestMethod.GET)
 	public ModelAndView deleteUser(@PathVariable(value = "userNo")int userNo){
 		RedirectView redirectView = new RedirectView("/graz/viewUsers");
@@ -134,6 +144,7 @@ public class UserController {
 		return new ModelAndView(redirectView);
 	}
 	
+	// 회원가입시 아이디 중복체크 로직
 	@RequestMapping(value = "/check", method = RequestMethod.GET)
 	public ModelAndView checkId(User user){
 		
