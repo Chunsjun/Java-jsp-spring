@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
@@ -53,7 +53,7 @@
 <body>
 <div class="container">
 <input type="button" value="메인으로" onclick="javascript:backToMain();" class="btn btn-default"/>
-	<table align="center" class="table" border="0">
+	<table class="table">
 		<thead>
 			<tr>
 				<th>회원번호</th>

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.graz.domain.Board;
+import org.graz.domain.File;
 import org.graz.domain.Review;
 import org.graz.persistence.BoardMapper;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,16 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public void deleteReview(int reviewNo) {
 		this.boardMapper.deleteReview(reviewNo);
+	}
+
+	@Override
+	public void fileWrite(File file) {
+		this.boardMapper.fileWrite(file);
+	}
+
+	@Override
+	public File fileLoad(int boardNo) {
+		return this.boardMapper.fileLoad(boardNo);
 	}
 
 }

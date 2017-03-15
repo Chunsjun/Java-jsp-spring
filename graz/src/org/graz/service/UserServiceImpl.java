@@ -49,4 +49,9 @@ public class UserServiceImpl implements UserService{
 	public void delete(int userNo) {
 		this.userMapper.completeDelete(userNo);
 	}
+
+	@Override
+	public User find(User user) {
+		return this.userMapper.find(user);
+	}
 }

@@ -14,4 +14,6 @@ public interface UserService {
 	public void delete(int userNo);
 	
 	public List<User> viewUsers();
+	
+	public User find(User user);
 }

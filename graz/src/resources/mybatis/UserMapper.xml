@@ -13,6 +13,10 @@
 		<result column="STATUS" property="status"/>
 	</resultMap>
 	
+	<sql id="selectSql">
+		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
+		FROM GRAZ_USER
+	</sql>
 	<sql id="whereSql">
 		<where>
 			<if test="userNo != 0">AND USER_NO = #{userNo}</if>
@@ -24,17 +28,28 @@
             <if test="status != 0">AND STATUS = #{status}</if>
 		</where>
 	</sql>
+	<sql id="findSql">
+		<where>
+			<if test = "name != null">AND NAME = #{name}</if>
+			<if test = "email != null">AND E_MAIL = #{email}</if>
+			<if test = "pNumber != null">AND P_NUMBER = #{pNumber}</if>
+			<if test = "id != null">AND ID = #{id}</if>
+		</where>
+	</sql>
 	
 	<select id="select" parameterType="user" resultMap="userResultMap">
-		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
-		FROM GRAZ_USER
+		<include refid="selectSql"/>
 		<include refid="whereSql"/>
 	</select>
 	
 	<select id="viewUsers" resultMap="userResultMap">
-		SELECT USER_NO, ID, NAME, PASSWORD, E_MAIL, P_NUMBER, STATUS
-		FROM GRAZ_USER
+		<include refid="selectSql"/>
 		ORDER BY USER_NO DESC
+	</select>
+	
+	<select id="find" parameterType="user" resultMap="userResultMap">
+		<include refid="selectSql"/>
+		<include refid="findSql"/>
 	</select>
 	
 	<insert id="insert" parameterType="user">

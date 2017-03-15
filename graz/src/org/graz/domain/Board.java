@@ -11,8 +11,9 @@ public class Board extends Paging implements Serializable {
 	private Date date;
 	private int view;
 	private int reviewCount;
+	private int fileStatus;
 
-	public Board(int boardNo, String title, String content, String writer, Date date, int view, int reviewCount) {
+	public Board(int boardNo, String title, String content, String writer, Date date, int view, int reviewCount, int fileStatus) {
 		this.boardNo = boardNo;
 		this.title = title;
 		this.content = content;
@@ -20,11 +21,20 @@ public class Board extends Paging implements Serializable {
 		this.date = date;
 		this.view = view;
 		this.reviewCount = reviewCount;
+		this.fileStatus = fileStatus;
 	}
 
 	public Board() {
 	}
 	
+	public int getFileStatus() {
+		return fileStatus;
+	}
+
+	public void setFileStatus(int fileStatus) {
+		this.fileStatus = fileStatus;
+	}
+
 	public int getReviewCount() {
 		return reviewCount;
 	}

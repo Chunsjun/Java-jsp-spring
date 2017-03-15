@@ -10,6 +10,7 @@
 		<result column="BOARD_DATE" property="date" />
 		<result column="BOARD_VIEW" property="view" />
 		<result column="REVIEW_COUNT" property="reviewCount" />
+		<result column="FILE_STATUS" property="fileStatus"/>
 	</resultMap>
 	<resultMap type="review" id="reviewResultMap">
 		<id column="REVIEW_NO" property="reviewNo" />
@@ -17,6 +18,13 @@
 		<result column="REVIEW_WRITER" property="reviewWriter" />
 		<result column="REVIEW_CONTENT" property="reviewContent" />
 		<result column="REVIEW_DATE" property="reviewDate" />
+	</resultMap>
+	<resultMap type="file" id="fileResultMap">
+		<id column="FILE_NO" property="fileNo"/>
+		<result column="BOARD_NO" property="boardNo"/>
+		<result column="FILE_TITLE" property="fileTitle"/>
+		<result column="FILE_PATH" property="filePath"/>
+		<result column="FILE_DATE" property="fileDate"/>
 	</resultMap>
 	
 	<sql id="selectSql">
@@ -58,10 +66,10 @@
 	
 	<select id="select" parameterType="board" resultMap="boardResultMap">
 		SELECT * FROM
-			(SELECT ROWNUM RN,<include refid="boardSql"/>,REVIEW_COUNT	FROM
+			(SELECT ROWNUM RN,<include refid="boardSql"/>,REVIEW_COUNT,FILE_STATUS FROM
 				(SELECT <include refid="boardSql"/>,
-				(SELECT COUNT(*) FROM GRAZ_REVIEW WHERE GRAZ_BOARD.BOARD_NO = GRAZ_REVIEW.BOARD_NO)
-					AS REVIEW_COUNT	
+				(SELECT COUNT(*) FROM GRAZ_REVIEW WHERE GRAZ_BOARD.BOARD_NO = GRAZ_REVIEW.BOARD_NO)AS REVIEW_COUNT,
+				(SELECT DISTINCT COUNT(*) FROM GRAZ_FILE WHERE GRAZ_BOARD.BOARD_NO = GRAZ_FILE.BOARD_NO)AS FILE_STATUS
 			FROM GRAZ_BOARD <include refid="searchSql"/>ORDER BY BOARD_NO DESC))
 		<where>
 			<!-- <if test="startBoardNo != null and startBoardNo != ''">
@@ -88,6 +96,10 @@
 		SELECT COUNT(*) FROM GRAZ_REVIEW
 		WHERE BOARD_NO = #{boardNo}
 	</select>
+	<select id="fileLoad" parameterType="int" resultMap="fileResultMap">
+		SELECT * FROM GRAZ_FILE
+		WHERE BOARD_NO = #{boardNo}
+	</select>
 	
 	<insert id="insert" parameterType="board">
 		INSERT INTO GRAZ_BOARD
@@ -108,6 +120,16 @@
 			#{reviewWriter, jdbcType=VARCHAR},
 			#{reviewContent, jdbcType=VARCHAR}, 
 			 SYSDATE)
+	</insert>
+	<insert id="fileWrite" parameterType="file">
+		INSERT INTO GRAZ_FILE
+			(FILE_NO, BOARD_NO, FILE_TITLE, FILE_PATH, FILE_DATE)
+		VALUES
+			(GRAZ_FILE_SEQ.NEXTVAL,
+			(SELECT LAST_NUMBER-1 AS BOARD_NO FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'GRAZ_BOARD_FREE_SEQ'),
+			#{fileTitle},
+			#{filePath},
+			SYSDATE)
 	</insert>
 	
 	<update id="update" parameterType="board">

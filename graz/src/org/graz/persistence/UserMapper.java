@@ -14,4 +14,5 @@ public interface UserMapper {
 	public void completeDelete(int userNo);
 	
 	public List<User> viewUsers();
+	public User find(User user);
 }

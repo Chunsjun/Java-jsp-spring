@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,7 +27,7 @@
 	
 	function findPop(){
 		var url = "/graz/find"
-		var option = "width=370, height=360, resizable=no, scrollbars=no, status=no;";
+		var option = "width=300, height=460, resizable=no, scrollbars=no, status=no;";
 		window.open(url,"",option);
 	}
 </script>
@@ -38,7 +38,7 @@
 </head>
 <body>
 <div class="container">
-	<table height="100%" width="100%" border="0">
+	<table>
 		<tr>
 			<td>
 				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -49,7 +49,7 @@
 				<div align="center">
 					<form action="/graz/login" method=post name="loginForm" class="form-signin">
 					<h2 class="form-signin-heading">Please sign in</h2>
-					<table border="0">
+					<table>
 						<tr>
 							<td>
 								<input type="text" id="id" name="id" 
@@ -71,10 +71,9 @@
 								<a href="join" style="padding: 10px">
 									Join
 								</a>
+								<a href="javascript:findPop();">
 									Find ID/PW
-								<!-- <a href="javascript:findPop();">
-									Find ID/PW
-								</a> -->
+								</a>
 							</td>
 						</tr>
 					</table>

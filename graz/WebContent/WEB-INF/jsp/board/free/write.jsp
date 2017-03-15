@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 <script type="text/javascript">
 	function formCheck() {
 		var form = document.writeBoard;
@@ -10,7 +11,6 @@
 			form.title.focus(); 
 			return;
 		}
-		
 		if((form.content.value.trim() == "") || (form.content.value == null)) {  
 			alert("내용을 적어주세요");  
 			form.content.focus();  
@@ -18,7 +18,6 @@
 		}
 		form.submit();
 	}
-	
 	function cancelCheck(){
 		if (confirm("정말 취소하시겠습니까??") == true){
 		    history.back(-1);
@@ -26,6 +25,21 @@
 		    return;
 		}
 	}
+	
+	$(function() {
+        $("#imgInp").on('change', function(){
+            readURL(this);
+        });
+    });
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+          reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -33,7 +47,7 @@
 </head>
 <body>
 <div class="container">
-	<table height="100%" width="100%">
+	<table>
 		<tr>
 			<td colspan="2">
 				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -42,9 +56,9 @@
 		<tr>
 			<td align="center">
 				<h1>자유 게시판</h1>
-		<!-- enctype="multipart/form-data"을 폼에 정의했을경우 action으로 전해지는 데이터가 request에 담기지 않는다. 대신 MultipartRequest 메소드를 사용하여 데이터 수신. -->
+<!-- enctype="multipart/form-data"을 폼에 정의했을경우 action으로 전해지는 데이터가 request에 담기지 않는다. 대신 MultipartRequest 메소드를 사용하여 데이터 수신. -->
 				<form name="writeBoard" action="/graz/board/free/write" method="post" enctype="multipart/form-data">
-				<table width="70%" height="50%" align="center" class="table">
+				<table class="table">
 					<thead>
 						<tr>
 							<th width="20%" height="10%" align="left">
@@ -75,7 +89,8 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								<input type="file" name="testFile">
+								<input type="file" name="file" id="imgInp">
+								<img id="blah" src="#" alt="" height="auto" width="100%"/>
 							</td>
 						</tr>
 						<tr>

@@ -65,6 +65,26 @@ public class UserController {
 		
 		return new ModelAndView(redirectView);
 	}
+
+	// 회원가입 아이디 중복체크 로직
+	@RequestMapping(value = "/check", method = RequestMethod.GET)
+	public ModelAndView checkId(User user){
+		
+		ModelAndView modelAndView = new ModelAndView("/user/join");
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		User result = userService.view(user);
+		if(result == null){
+			stringBuffer.append("alert('"+user.getId()+"은(는) 사용가능 합니다.'"+");")
+						.append("window.close();").append("window.opener.joinBtnUnDisabled();");
+			modelAndView.addObject("resultCheckId", stringBuffer.toString());
+		}else{
+			stringBuffer.append("alert('"+user.getId()+"은(는) 사용중입니다.'"+");")
+						.append("window.close();").append("window.opener.joinBtnDisabled();");
+			modelAndView.addObject("resultCheckId", stringBuffer.toString());
+		}
+		return modelAndView;
+	}
 	
 	// 회원 정보 수정 처리 로직
 	@RequestMapping(value = "/userInfoUpdate", method = RequestMethod.POST)
@@ -98,6 +118,36 @@ public class UserController {
 		session.removeAttribute("user");
 		
 		return new ModelAndView(redirectView);
+	}
+	
+	// 아이디 & 비밀번호 찾기 로직
+	@RequestMapping(value = "/find", method = RequestMethod.POST)
+	public ModelAndView findId(User user){
+		
+		ModelAndView modelAndView = new ModelAndView("/user/find");
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		if(user.getId() == null){
+			user = userService.find(user);
+			if(user == null){
+				stringBuffer.append("alert('아이디가 존재하지않습니다');");
+				modelAndView.addObject("find", stringBuffer.toString());
+			}else{
+				stringBuffer.append("alert('찾으신 아이디는 "+user.getId()+" 입니다.');");
+				modelAndView.addObject("find", stringBuffer.toString());
+			}
+		}else{
+			user = userService.find(user);
+			if(user == null){
+				stringBuffer.append("alert('일치하는 정보가 없습니다');");
+				modelAndView.addObject("find", stringBuffer.toString());
+			}else{
+				stringBuffer.append("alert('찾으신 비밀번호는 "+user.getPassword()+" 입니다.');");
+				modelAndView.addObject("find", stringBuffer.toString());
+			}
+		}
+		
+		return modelAndView;
 	}
 	
 	// 관리자 전용 회원정보 리스트 출력 로직
@@ -142,25 +192,5 @@ public class UserController {
 		userService.delete(userNo);
 		
 		return new ModelAndView(redirectView);
-	}
-	
-	// 회원가입시 아이디 중복체크 로직
-	@RequestMapping(value = "/check", method = RequestMethod.GET)
-	public ModelAndView checkId(User user){
-		
-		ModelAndView modelAndView = new ModelAndView("/user/join");
-		StringBuffer stringBuffer = new StringBuffer();
-		
-		User result = userService.view(user);
-		if(result == null){
-			stringBuffer.append("alert('"+user.getId()+"은(는) 사용가능 합니다.'"+");")
-						.append("window.close();").append("window.opener.joinBtnUnDisabled();");
-			modelAndView.addObject("resultCheckId", stringBuffer.toString());
-		}else{
-			stringBuffer.append("alert('"+user.getId()+"은(는) 사용중입니다.'"+");")
-						.append("window.close();").append("window.opener.joinBtnDisabled();");
-			modelAndView.addObject("resultCheckId", stringBuffer.toString());
-		}
-		return modelAndView;
 	}
 }

@@ -3,6 +3,7 @@ package org.graz.persistence;
 import java.util.List;
 
 import org.graz.domain.Board;
+import org.graz.domain.File;
 import org.graz.domain.Review;
 
 public interface BoardMapper {
@@ -19,4 +20,7 @@ public interface BoardMapper {
 	public List<Review> viewReview(int boardNo);
 	public int reviewCount(int boardNo);
 	public void deleteReview(int reviewNo);
+	
+	public void fileWrite(File file);
+	public File fileLoad(int boardNo);
 }

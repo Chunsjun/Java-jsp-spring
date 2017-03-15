@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.graz.domain.Board;
+import org.graz.domain.File;
 import org.graz.domain.PageInformation;
 import org.graz.domain.Review;
 import org.graz.domain.User;
@@ -53,31 +54,44 @@ public class BoardController {
 
 	// 자유게시판 글쓰기&파일업로드 로직
 	@RequestMapping(value = "/free/write", method = RequestMethod.POST)
-	public ModelAndView boardWrite(Board board, User user, HttpSession session, HttpServletRequest request) throws IOException {
+	public ModelAndView boardWrite(Board board, User user, File file, HttpSession session, HttpServletRequest request) throws IOException {
 
 		RedirectView redirectView = new RedirectView("/graz/board/free");
 		redirectView.setExposeModelAttributes(false);
 		
 		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
 		int sizeLimit = 1024*1024*15; // 파일크기 15MB로 제한
-		String savePath = request.getServletContext().getRealPath("files"); // 경로 C:\WorkSpace\graz\WebContent\files 를 말한다
+		// String savePath = request.getServletContext().getRealPath("files"); // 경로 C:\WorkSpace\graz\WebContent\files 를 말한다
+		// String savePath = "C:\\WorkSpace\\graz\\WebContent\\files";
+		String savePath = "C:\\WorkSpace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp3\\wtpwebapps\\graz\\files";
+		
 		MultipartRequest multi = new MultipartRequest(request, savePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
 		
 		user = (User) session.getAttribute("user");
 		board.setWriter(user.getName());
+		
 		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
 		board.setTitle(multi.getParameter("title"));
 		board.setContent(multi.getParameter("content"));
+		
+		String fileName = multi.getFilesystemName("file");
+		file.setFileTitle(fileName);
+		file.setFilePath(savePath+"/"+fileName);
 		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
 		
 		this.boardService.write(board);
+		// 만약 파일이 없다면 업로드 하지 않는다
+		if(fileName != null){
+			this.boardService.fileWrite(file);
+		}
+		
 		return new ModelAndView(redirectView);
 	}
 
 	// 자유게시판 게시글 디테일뷰
 	@RequestMapping(value = "/free/view/{boardNo}", method = RequestMethod.GET)
-	public ModelAndView viewFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
+	public ModelAndView viewFreeBoard(@PathVariable int boardNo, Board board, File file) throws Exception {
 
 		ModelAndView modelAndView = new ModelAndView("/board/free/view");
 
@@ -86,6 +100,7 @@ public class BoardController {
 		// --------------------------------
 
 		board = this.boardService.view(boardNo);
+		file = this.boardService.fileLoad(boardNo);
 		List<Review> review = this.boardService.viewReview(boardNo);
 
 		// 엔터값 \r\n을 <br> 으로 치환후 내용셋팅----
@@ -93,9 +108,18 @@ public class BoardController {
 		str = str.replace("\r\n", "<br>");
 		board.setContent(str);
 		// -------------------------------
-
+		// 이미지를 불러오기위한 경로 설정
+		if(file != null){
+			String str2 = file.getFilePath();
+			//str2 = str2.replace("C:\\WorkSpace\\graz\\WebContent\\", "/");
+			str2 = str2.replace("C:\\WorkSpace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp3\\wtpwebapps\\graz\\", "/");
+			file.setFilePath(str2);
+		}
+		//---------------------------------
+		
 		modelAndView.addObject("board", board);
 		modelAndView.addObject("viewReview", review);
+		modelAndView.addObject("file",file);
 		modelAndView.addObject("reviewCount", this.boardService.reviewCount(boardNo));
 
 		return modelAndView;
@@ -103,19 +127,30 @@ public class BoardController {
 
 	// 자유게시판 게시글 업데이트 폼
 	@RequestMapping(value = "/free/update/{boardNo}", method = RequestMethod.GET)
-	public ModelAndView updateFreeBoardForm(@PathVariable int boardNo, Board board) throws Exception {
+	public ModelAndView updateFreeBoardForm(@PathVariable int boardNo, Board board, File file) throws Exception {
 
 		ModelAndView modelAndView = new ModelAndView("/board/free/update");
 
 		board = this.boardService.view(boardNo);
+		file = this.boardService.fileLoad(boardNo);
 
 		// 엔터값 <br>을 \r\n 으로 치환후 내용셋팅-----
 		String str = board.getContent();
 		str = str.replace("<br>", "\r\n");
 		board.setContent(str);
 		// --------------------------------
-
+		
+		// 이미지를 불러오기위한 경로 설정
+		if(file != null){
+			String str2 = file.getFilePath();
+			//str2 = str2.replace("C:\\WorkSpace\\graz\\WebContent\\", "/");
+			str2 = str2.replace("C:\\WorkSpace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp3\\wtpwebapps\\graz\\", "/");
+			file.setFilePath(str2);
+		}
+		//---------------------------------
+		
 		modelAndView.addObject("board", board);
+		modelAndView.addObject("file", file);
 		return modelAndView;
 	}
 

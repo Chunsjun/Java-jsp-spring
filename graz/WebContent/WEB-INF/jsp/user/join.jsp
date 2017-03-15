@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <script type="text/javascript">
 	function join(){
@@ -74,6 +74,11 @@
 		}
 	}
 	
+	function passwordCheck(){
+		alert("test");
+	}
+	
+	
 	<c:out value="${resultCheckId}" escapeXml="false"/>
 </script>
 <head>
@@ -82,7 +87,7 @@
 </head>
 <body>
 <div class="container">
-	<table height="100%" width="100%">
+	<table>
 		<tr>
 			<td>
 				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -113,10 +118,13 @@
 						<tr>
 							<td>
 								<input type="password" id="password" name="password" class="form-control" 
-									placeholder="PASSWORD" maxlength="12"/>
+									placeholder="PASSWORD" maxlength="12"/><br>
+								<input type="password" id="passwordChecker" name="passwordCheck" class="form-control"
+									placeholder="PASSWORD CHECK" maxlength="12"/>
 							</td>
 							<td style="color: gray">
 								<c:out value="(8 ~ 12자의 비밀번호 입력)"/>
+								<p id="checkAlert"></p>
 							</td>
 						</tr>
 						<tr>

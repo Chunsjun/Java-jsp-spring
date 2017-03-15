@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <script type="text/javascript">
 	function writeBoard(){
@@ -14,7 +14,7 @@
 </head>
 <body>
 <div class="container">
-<table height="100%" width="100%" border="0">
+<table>
 	<tr>
 		<td colspan="2">
 			<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -54,8 +54,11 @@
 								<td style="text-align: left; padding: 10px;">
 									<a href="/graz/board/free/view/${board.boardNo}">
 										<c:out value="${board.title}" />
+										<c:if test="${board.fileStatus != 0}">
+											<img src="\img\fileStatus.png">
+										</c:if>
 										<c:if test="${board.reviewCount != 0}">
-											<c:out value="(${board.reviewCount})"/>
+											<c:out value="[${board.reviewCount}]"/>
 										</c:if>
 									</a>
 								</td>

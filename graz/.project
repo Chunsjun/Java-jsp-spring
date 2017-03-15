@@ -33,4 +33,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>WebContent/files</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/.metadata/.plugins/org.eclipse.wst.server.core/tmp3/wtpwebapps/graz/files</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <script type="text/javascript">
 	function formCheck() {
@@ -38,7 +38,7 @@
 </head>
 <body>
 <div class="container">
-	<table height="100%" width="100%" border="0">
+	<table>
 		<tr>
 			<td colspan="2">
 				<%@include file="/WEB-INF/jsp/main/top.jsp"%>
@@ -48,7 +48,7 @@
 			<td align="center">
 				<h1>자유 게시판</h1>
 				<form name="updateBoard" action="/graz/board/free/update/${board.boardNo}" method="post" >
-				<table width="70%" height="50%" align="center" class="table">
+				<table class="table">
 					<thead>
 						<tr>
 							<th width="20%" height="10%" align="left">
@@ -84,6 +84,14 @@
 								<textarea rows="15" cols="70" name="content" class="form-control"><c:out value="${board.content}"/></textarea>
 							</td>
 						</tr>
+						<c:if test="${!empty file.filePath}">
+							<tr>
+								<td colspan="2" align="center">
+									<img alt="" src="${file.filePath}" width="30%" height="auto">
+									<input type="button" value="삭제" onclick="">
+								</td>
+							</tr>
+						</c:if>
 						<tr>
 							<td align="center" colspan="2">
 								<input type="button" value="수정" onclick="javascript:formCheck();" class="btn btn-default">
