@@ -11,7 +11,7 @@ public interface BoardService {
 	public void write(Board board);
 	public Board view(int boardNo);
 	public void update(Board board);
-	public void delete(Board board);
+	public void delete(int boardNo);
 	
 	public int count();
 	public void viewUp(int boardNo);
@@ -23,4 +23,8 @@ public interface BoardService {
 	
 	public void fileWrite(File file);
 	public File fileLoad(int boardNo);
+	
+	public int parentDepth(int reviewNo);
+	public void writeComment(Review review);
+	public List<Review> viewComment(int boardNo);
 }

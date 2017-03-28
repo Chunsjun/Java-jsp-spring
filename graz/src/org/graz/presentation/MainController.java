@@ -42,7 +42,7 @@ public class MainController {
 	public String info(){
 		return "/info/info";
 	}
-	// 아이디 비밀번호 찾기 폼(미완성)
+	// 아이디 비밀번호 찾기 폼
 	@RequestMapping(value = "/find", method = RequestMethod.GET)
 	public String findIdPw(){
 		return "/user/find";

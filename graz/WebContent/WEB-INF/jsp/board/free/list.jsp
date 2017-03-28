@@ -51,7 +51,7 @@
 									<c:out value="${board.boardNo}"/>
 								</td>
 							</c:if>
-								<td style="text-align: left; padding: 10px;">
+								<td>
 									<a href="/graz/board/free/view/${board.boardNo}">
 										<c:out value="${board.title}" />
 										<c:if test="${board.fileStatus != 0}">
@@ -62,15 +62,15 @@
 										</c:if>
 									</a>
 								</td>
-								<td style="text-align: left;">
+								<td>
 									<c:out value="${board.writer}" />
 								</td>
 								<c:if test="${isMobile eq false}">
-									<td style="text-align: left;">
+									<td>
 										<c:out value="${board.date}"/>
 									</td>
 								</c:if>
-								<td style="text-align: center;">
+								<td>
 									<c:out value="${board.view}"/>
 								</td>
 							</tr>

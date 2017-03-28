@@ -4,7 +4,9 @@
 <!DOCTYPE html>
 <html>
 <script type="text/javascript">
+		
 	function join(){
+
 		var form = document.joinForm;
 		
 		if(form.id.value == "") {  //form에 있는 memberNo 값이 없을 때
@@ -32,12 +34,20 @@
 			form.pNumber.focus();
 			return;
 		}
+		if(form.password.value != form.passwordCheck.value){
+			alert("비밀번호가 동일하지 않습니다");
+			form.password.focus();
+			return;
+		}
 		form.submit();
 	}
 	
 	function check(id){
+		var form = document.joinForm;
+		
 		if(id == ""){
 			alert("아이디를 적어주세요.");
+			form.id.focus();
 			return;
 		}else{
 			var option = "width=370, height=360, resizable=no, scrollbars=no, status=no;";
@@ -73,11 +83,6 @@
 			return;
 		}
 	}
-	
-	function passwordCheck(){
-		alert("test");
-	}
-	
 	
 	<c:out value="${resultCheckId}" escapeXml="false"/>
 </script>
@@ -119,7 +124,7 @@
 							<td>
 								<input type="password" id="password" name="password" class="form-control" 
 									placeholder="PASSWORD" maxlength="12"/><br>
-								<input type="password" id="passwordChecker" name="passwordCheck" class="form-control"
+								<input type="password" id="passwordCheck" name="passwordCheck" class="form-control"
 									placeholder="PASSWORD CHECK" maxlength="12"/>
 							</td>
 							<td style="color: gray">

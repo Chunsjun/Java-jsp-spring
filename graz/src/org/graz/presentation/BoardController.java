@@ -1,6 +1,7 @@
 package org.graz.presentation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -102,7 +103,18 @@ public class BoardController {
 		board = this.boardService.view(boardNo);
 		file = this.boardService.fileLoad(boardNo);
 		List<Review> review = this.boardService.viewReview(boardNo);
-
+		List<Review> comment = this.boardService.viewComment(boardNo);
+		
+		for(int i = 0; i < review.size(); i ++){
+			List<Review> temp = new ArrayList<>();
+			for(int j = 0; j < comment.size(); j++){
+				if(review.get(i).getReviewNo() == comment.get(j).getParent()){
+					temp.add(comment.get(j));
+				}
+			}
+			review.get(i).setComment(temp);
+		}
+		
 		// 엔터값 \r\n을 <br> 으로 치환후 내용셋팅----
 		String str = board.getContent();
 		str = str.replace("\r\n", "<br>");
@@ -117,8 +129,8 @@ public class BoardController {
 		}
 		//---------------------------------
 		
-		modelAndView.addObject("board", board);
 		modelAndView.addObject("viewReview", review);
+		modelAndView.addObject("board", board);
 		modelAndView.addObject("file",file);
 		modelAndView.addObject("reviewCount", this.boardService.reviewCount(boardNo));
 
@@ -157,35 +169,30 @@ public class BoardController {
 	// 자유게시판 게시글 업데이트 처리로직
 	@RequestMapping(value = "/free/update/{boardNo}", method = RequestMethod.POST)
 	public ModelAndView updateFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
-		ModelAndView modelAndView = new ModelAndView("/board/free/view");
+		RedirectView redirectView = new RedirectView("/graz/board/free/view/"+boardNo);
+		redirectView.setExposeModelAttributes(false);
 
 		board.setBoardNo(boardNo);
 		this.boardService.update(board);
-
-		board = this.boardService.view(boardNo);
-		List<Review> review = this.boardService.viewReview(boardNo);
-
-		// 엔터값 \r\n을 <br> 으로 치환후 내용셋팅----
-		String str = board.getContent();
-		str = str.replace("\r\n", "<br>");
-		board.setContent(str);
-		// -------------------------------
-		
-		modelAndView.addObject("board", board);
-		modelAndView.addObject("viewReview", review);
-		return modelAndView;
+		return new ModelAndView(redirectView);
 	}
 
 	// 자유게시판 게시글 삭제 로직
 	@RequestMapping(value = "/free/delete/{boardNo}", method = RequestMethod.GET)
-	public ModelAndView deleteFreeBoard(@PathVariable int boardNo, Board board) throws Exception {
-
+	public ModelAndView deleteFreeBoard(@PathVariable int boardNo, HttpSession session) throws Exception {
+		
 		RedirectView redirectView = new RedirectView("/graz/board/free");
 		redirectView.setExposeModelAttributes(false);
-
-		board.setBoardNo(boardNo);
-		this.boardService.delete(board);
-
+		
+		User user = (User) session.getAttribute("user");
+		Board board = this.boardService.view(boardNo);
+		
+		if(user != null && user.getName().equals(board.getWriter())){ // 로그인되어있고 게시글 작성자가 맞는지 확인
+			this.boardService.delete(boardNo);
+		}else if(user != null && user.getUserNo() == 0){ // 로그인되어있고 관리자 인지 확인
+			this.boardService.delete(boardNo);
+		}
+		
 		return new ModelAndView(redirectView);
 	}
 	
@@ -211,16 +218,32 @@ public class BoardController {
 
 	// 자유게시판 게시글 댓글 삭제 로직
 	@RequestMapping(value = "/free/review/delete/{boardNo}/{reviewNo}")
-	public ModelAndView reviewDelete(@PathVariable int boardNo, @PathVariable int reviewNo) {
+	public ModelAndView reviewDelete(@PathVariable int boardNo, @PathVariable int reviewNo, HttpSession session) {
 
 		RedirectView redirectView = new RedirectView("/graz/board/free/view/" + boardNo);
 		redirectView.setExposeModelAttributes(false);
-
+		
 		this.boardService.deleteReview(reviewNo);
-
 		return new ModelAndView(redirectView);
 	}
 
+	// 답글 쓰기 로직
+	@RequestMapping(value = "/free/reviewComment/{boardNo}/{reviewNo}", method = RequestMethod.POST)
+	public ModelAndView reviewComment(@PathVariable int boardNo, @PathVariable int reviewNo, Review review, HttpSession session){
+		
+		RedirectView redirectView = new RedirectView("/graz/board/free/view/"+boardNo);
+		redirectView.setExposeContextBeansAsAttributes(false);
+		
+		User user = (User) session.getAttribute("user");
+		review.setReviewWriter(user.getName());
+		review.setBoardNo(boardNo);
+		review.setParent(reviewNo);
+		this.boardService.writeComment(review);
+
+		return new ModelAndView(redirectView);
+	}
+	
+	
 	// 모바일 접속 확인 메소드 return boolean
 	private boolean isMobile(HttpServletRequest request) {
 		String userAgent = request.getHeader("user-agent");

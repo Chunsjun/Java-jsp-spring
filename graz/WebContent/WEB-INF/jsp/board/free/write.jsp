@@ -40,6 +40,20 @@
           reader.readAsDataURL(input.files[0]);
         }
     }
+    
+    function fileCheck(fileObj)
+    {
+     var filePath = fileObj.value;
+     var fileName = filePath.substring(filePath.lastIndexOf("\\")+1);
+     var fileKind = fileName.split(".")[1];
+     if(fileKind != "jpg" && fileKind != "gif" && fileKind != "png" && fileKind != "jpeg")
+     {
+      alert("jpg, gif, png, jpeg 확장자를 가진 이미지 파일만 올려주세요.");
+      document.getElementById("imgInp").value = "";
+      document.getElementById("imgInp").select();
+      document.selection.clear();
+     }
+    }
 </script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -89,7 +103,7 @@
 						</tr>
 						<tr>
 							<td colspan="2">
-								<input type="file" name="file" id="imgInp">
+								<input type="file" name="file" id="imgInp" accept="image/*" onchange="fileCheck(this)">
 								<img id="blah" src="#" alt="" height="auto" width="100%"/>
 							</td>
 						</tr>

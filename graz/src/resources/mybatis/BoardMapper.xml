@@ -18,6 +18,7 @@
 		<result column="REVIEW_WRITER" property="reviewWriter" />
 		<result column="REVIEW_CONTENT" property="reviewContent" />
 		<result column="REVIEW_DATE" property="reviewDate" />
+		<result column="PARENT" property="parent" />
 	</resultMap>
 	<resultMap type="file" id="fileResultMap">
 		<id column="FILE_NO" property="fileNo"/>
@@ -27,9 +28,12 @@
 		<result column="FILE_DATE" property="fileDate"/>
 	</resultMap>
 	
+	<sql id="boardSql">
+		BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER, BOARD_DATE, BOARD_VIEW
+	</sql>
 	<sql id="selectSql">
 		SELECT 
-		BOARD_NO, BOARD_TITLE, BOARD_CONTENT, BOARD_WRITER, BOARD_DATE, BOARD_VIEW
+		<include refid="boardSql"/>
 		FROM GRAZ_BOARD
 	</sql>
 	<sql id="whereSql">
@@ -60,9 +64,6 @@
 		(SELECT BOARD_VIEW FROM GRAZ_BOARD WHERE BOARD_NO = #{boardNo}) + 1 
 		WHERE BOARD_NO = #{boardNo}
 	</sql>
-	<sql id="boardSql">
-		BOARD_NO,BOARD_TITLE,BOARD_CONTENT,BOARD_WRITER,BOARD_DATE,BOARD_VIEW
-	</sql>
 	
 	<select id="select" parameterType="board" resultMap="boardResultMap">
 		SELECT * FROM
@@ -90,7 +91,7 @@
 	<select id="viewReview" parameterType="int" resultMap="reviewResultMap">
 		SELECT * FROM 
 		(SELECT * FROM GRAZ_REVIEW ORDER BY REVIEW_NO)
-		WHERE BOARD_NO = #{boardNo}
+		WHERE BOARD_NO = #{boardNo} AND PARENT IS NULL
 	</select>
 	<select id="reviewCount" parameterType="int" resultType="int">
 		SELECT COUNT(*) FROM GRAZ_REVIEW
@@ -99,6 +100,11 @@
 	<select id="fileLoad" parameterType="int" resultMap="fileResultMap">
 		SELECT * FROM GRAZ_FILE
 		WHERE BOARD_NO = #{boardNo}
+	</select>
+	<select id="viewComment" parameterType="int" resultMap="reviewResultMap">
+		SELECT * FROM
+		(SELECT * FROM GRAZ_REVIEW ORDER BY REVIEW_NO)
+		WHERE BOARD_NO = #{boardNo} AND PARENT IS NOT NULL
 	</select>
 	
 	<insert id="insert" parameterType="board">
@@ -131,6 +137,17 @@
 			#{filePath},
 			SYSDATE)
 	</insert>
+	<insert id="writeComment" parameterType="review">
+		INSERT INTO GRAZ_REVIEW
+			(REVIEW_NO, BOARD_NO, REVIEW_WRITER, REVIEW_CONTENT, REVIEW_DATE, PARENT)
+		VALUES
+			(GRAZ_REVIEW_SEQ.NEXTVAL,
+			#{boardNo},
+			#{reviewWriter, jdbcType=VARCHAR},
+			#{reviewContent, jdbcType=VARCHAR},
+			SYSDATE,
+			#{parent})
+	</insert>
 	
 	<update id="update" parameterType="board">
 		UPDATE GRAZ_BOARD
@@ -141,7 +158,7 @@
 		<include refid="viewUp"/>
 	</update>
 	
-	<delete id="delete" parameterType="board">
+	<delete id="delete" parameterType="int">
 		DELETE FROM GRAZ_BOARD
 		WHERE BOARD_NO = #{boardNo}
 	</delete>

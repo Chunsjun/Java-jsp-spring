@@ -63,7 +63,7 @@
 						<tr>
 							<td>
 								<input type="password" id="password" name="password" 
-									class="form-control" placeholder="PASSWORD">
+									class="form-control" placeholder="PASSWORD" onkeydown="javascript: if(event.keyCode == 13){login();}">
 							</td>
 						</tr>
 						<tr>

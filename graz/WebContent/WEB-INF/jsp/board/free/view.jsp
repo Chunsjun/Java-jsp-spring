@@ -33,7 +33,6 @@
 		var rlen = 0;
 		var one_char = "";
 		var str2 = "";
-		
 		for(var i=0; i<str_len; i++){
 			one_char = str.charAt(i);
 			if(escape(one_char).length > 3){
@@ -45,7 +44,6 @@
 		    	rlen = i+1;//return할 문자열 갯수
 			}
 		}
-
 		if(rbyte > maxByte){
 		    alert("한글 "+(maxByte/2)+"자 / 영문 "+maxByte+"자를 초과 입력할 수 없습니다.");
 		    str2 = str.substr(0,rlen);//문자열 자르기
@@ -55,6 +53,38 @@
 		    	document.getElementById('byteInfo').innerText = rbyte;
 			}
 		}
+	
+	function writeReview(){
+		var reviewForm = document.reviewWrite;
+		if(reviewForm.reviewContent.value == ""){
+			alert("댓글 내용이 없습니다!!");
+			return;
+		}else{
+			reviewForm.submit();
+		}
+	}
+	
+	function hidTextAreaView(index){
+		var commentView = document.getElementById("comment"+index).hidden;
+		
+		if(commentView == true){
+			document.getElementById("comment"+index).hidden = false;
+			document.getElementById("commentBtn"+index).hidden = false;
+		}else{
+			document.getElementById("comment"+index).hidden = true;
+			document.getElementById("commentBtn"+index).hidden = true;
+		}
+	}
+	
+	function hidTextAreaSubmit(index){
+		var a = document.getElementById("comment"+index).value;
+		if(a == ""){
+			alert("답글 내용이 없습니다!!");
+		}else{
+			document.getElementById("commentForm"+index).submit();
+		}
+	}
+	
 </script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -123,26 +153,29 @@
 					</tr>
 					<c:if test="${!empty file.filePath}">
 					<tr>
-						<td colspan="2" align="center">
+						<td colspan="2" align="center"><a href="${file.filePath}">
 							<img alt="" src="${file.filePath}" width="100%" height="auto">
-						</td>
+						</a></td>
 					</tr>
 					</c:if>
 				</table>
 				</form>
-				<form name="reviewWrite" action="/graz/board/free/review/${board.boardNo}" method="post">
 				<table class="table">
 					<tr>
-						<th width="20%">
-							<c:out value="댓글(${reviewCount})"/>
-						</th>
+						<td width="25%">
+							<label>
+								<c:out value="댓글(${reviewCount})"/>
+							</label>
+						</td>
 						<c:if test="${sessionScope.user != null}">
 						<td>
-							<textarea name="reviewContent" style="width:100%;height:100;" onKeyUp="javascript:fnChkByte(this,'200')"></textarea>
-							<span id="byteInfo">0</span>/200Byte
+							<form name="reviewWrite" action="/graz/board/free/review/${board.boardNo}" method="post">
+								<textarea name="reviewContent" style="width:100%;height:100;" onKeyUp="javascript:fnChkByte(this,'200')"></textarea>
+							</form>
+							<label><span id="byteInfo">0</span>/200Byte</label>
 						</td>
-						<td colspan="2" width="20%">
-							<input type="submit" class="btn btn-default" value="댓글달기">
+						<td width="20%">
+							<input type="button" value="댓글달기" class="btn btn-default" onclick="writeReview();">
 						</td>
 						</c:if>
 					</tr>
@@ -159,14 +192,23 @@
 					<c:forEach items="${viewReview}" var="review" varStatus="status">
 						<tr>
 							<td style="text-align: left;">
-								<c:out value="${review.reviewWriter}" />
+								<label>
+									<c:out value="${review.reviewWriter}" /><br>
+								</label>
+									<a style="font-size: 10px;" onclick="hidTextAreaView('${status.index}');">답글</a>
 							</td>
 							<td style="text-align: left; padding: 10px;">
 								<c:out value="${review.reviewContent}" />
+								<c:if test="${sessionScope.user != null}">
+									<form id="commentForm${status.index}" action="/graz/board/free/reviewComment/${board.boardNo}/${review.reviewNo}" method="post">
+										<input id="comment${status.index}" name="reviewContent" type="text" size="13" hidden="true" onkeyPress="if (event.keyCode==13){return false;}">
+										<input id="commentBtn${status.index}" type="button" value="답글달기" hidden="true" 
+										onclick="hidTextAreaSubmit('${status.index}');">
+									</form>
+								</c:if>
 							</td>
 							<td style="text-align: left; color: gray;" width="20%">
 								<fmt:formatDate value="${review.reviewDate}" pattern="yy.MM.dd (kk:mm:ss)"/>
-								<%-- <c:out value="${review.reviewDate}"/> --%>
 								<c:if test="${
 								(sessionScope.user.name eq board.writer) || 
 								(sessionScope.user.userNo eq 0) || 
@@ -175,13 +217,32 @@
 								</c:if>
 							</td>
 						</tr>
+						<c:if test="${!empty review.comment}">
+							<c:forEach var="comment" items="${review.comment}">
+								<tr>
+									<td><label>
+									<img src="/img/대댓글화살표.png" width="10px" height="10px">
+										<c:out value="${comment.reviewWriter}"/>
+									</label></td>
+									<td>
+										<c:out value="${comment.reviewContent}"/>
+									</td>
+									<td style="color: gray;">
+										<fmt:formatDate value="${comment.reviewDate}" pattern="yy.MM.dd (kk:mm:ss)"/>
+											<c:if test="${
+												(sessionScope.user.name eq board.writer) || 
+												(sessionScope.user.userNo eq 0) || 
+												(sessionScope.user.name eq review.reviewWriter)}">
+												<input type="button" class="btn btn-warning" value="삭제" onclick="javascript:removeReview('${board.boardNo}','${comment.reviewNo}');">
+											</c:if>
+									</td>
+								</tr>
+							</c:forEach>
+						</c:if>
 					</c:forEach>
 					</c:if>
-				</table>
-				</form>
-			</td>
-		</tr>
-	</table>
-</div>
+			</table>
+		</table>
+	</div>
 </body>
 </html>

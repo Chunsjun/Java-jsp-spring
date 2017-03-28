@@ -37,8 +37,8 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public void delete(Board board) {
-		this.boardMapper.delete(board);
+	public void delete(int boardNo) {
+		this.boardMapper.delete(boardNo);
 	}
 
 	@Override
@@ -79,6 +79,20 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public File fileLoad(int boardNo) {
 		return this.boardMapper.fileLoad(boardNo);
+	}
+
+	@Override
+	public int parentDepth(int reviewNo) {
+		return this.boardMapper.parentDepth(reviewNo);
+	}
+
+	@Override
+	public void writeComment(Review review) {
+		this.boardMapper.writeComment(review);
+	}
+	
+	public List<Review> viewComment(int boardNo){
+		return this.boardMapper.viewComment(boardNo);
 	}
 
 }

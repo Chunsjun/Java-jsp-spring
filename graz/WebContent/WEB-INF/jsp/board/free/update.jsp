@@ -31,6 +31,10 @@
 		    return;
 		}
 	}
+	
+	function deleteImg(){
+		alert("아직 미완성");
+	}
 </script>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -87,8 +91,8 @@
 						<c:if test="${!empty file.filePath}">
 							<tr>
 								<td colspan="2" align="center">
-									<img alt="" src="${file.filePath}" width="30%" height="auto">
-									<input type="button" value="삭제" onclick="">
+									<img alt="" src="${file.filePath}" width="30%" height="auto" id="imgInp">
+									<input type="button" value="삭제" onclick="javascript:deleteImg();">
 								</td>
 							</tr>
 						</c:if>

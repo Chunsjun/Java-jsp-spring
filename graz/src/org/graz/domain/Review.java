@@ -1,8 +1,8 @@
 package org.graz.domain;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class Review implements Serializable{
 	private int boardNo;
@@ -10,16 +10,37 @@ public class Review implements Serializable{
 	private String reviewWriter;
 	private String reviewContent;
 	private Date reviewDate;
+	private int parent;
+	private List<Review> comment;
+	
 	
 	public Review(){
 	}
 	
-	public Review(int boardNo, int reviewNo, String reviewWriter, String reviewContent, Date reviewDate){
+	public Review(int boardNo, int reviewNo, String reviewWriter, String reviewContent, Date reviewDate, int parent, List<Review> comment){
 		this.boardNo = boardNo;
 		this.reviewNo = reviewNo;
 		this.reviewWriter = reviewWriter;
 		this.reviewContent = reviewContent;
 		this.reviewDate = reviewDate;
+		this.parent = parent;
+		this.comment = comment;
+	}
+
+	public List<Review> getComment() {
+		return comment;
+	}
+
+	public void setComment(List<Review> comment) {
+		this.comment = comment;
+	}
+
+	public int getParent() {
+		return parent;
+	}
+
+	public void setParent(int parent) {
+		this.parent = parent;
 	}
 
 	public int getBoardNo() {
