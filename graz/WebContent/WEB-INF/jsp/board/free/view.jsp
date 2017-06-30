@@ -66,6 +66,7 @@
 	
 	function hidTextAreaView(index){
 		var commentView = document.getElementById("comment"+index).hidden;
+		var cmtForm = document.getElementById("commentForm"+index);
 		
 		if(commentView == true){
 			document.getElementById("comment"+index).hidden = false;
@@ -74,6 +75,7 @@
 			document.getElementById("comment"+index).hidden = true;
 			document.getElementById("commentBtn"+index).hidden = true;
 		}
+		cmtForm.reviewContent.focus();
 	}
 	
 	function hidTextAreaSubmit(index){
@@ -154,7 +156,7 @@
 					<c:if test="${!empty file.filePath}">
 					<tr>
 						<td colspan="2" align="center"><a href="${file.filePath}">
-							<img alt="" src="${file.filePath}" width="100%" height="auto">
+							<img alt="" src="${file.filePath}" width="50%" height="auto">
 						</a></td>
 					</tr>
 					</c:if>
@@ -181,7 +183,7 @@
 					</tr>
 					<tr>
 						<td align="center" colspan="3">
-							<c:if test="${(sessionScope.user.name eq board.writer) || (sessionScope.user.userNo eq 0)}">
+							<c:if test="${(sessionScope.user.userNo eq board.boardWriterNo) || (sessionScope.user.userNo eq 0)}">
 								<input type="button" value="수정" onclick="javascript:update('${board.boardNo}');" class="btn btn-default">
 								<input type="button" value="삭제" onclick="javascript:boardDelete('${board.boardNo}');" class="btn btn-default">
 							</c:if>
@@ -200,7 +202,7 @@
 							<td style="text-align: left; padding: 10px;">
 								<c:out value="${review.reviewContent}" />
 								<c:if test="${sessionScope.user != null}">
-									<form id="commentForm${status.index}" action="/graz/board/free/reviewComment/${board.boardNo}/${review.reviewNo}" method="post">
+									<form id="commentForm${status.index}" name="commentForm${status.index}" action="/graz/board/free/reviewComment/${board.boardNo}/${review.reviewNo}" method="post">
 										<input id="comment${status.index}" name="reviewContent" type="text" size="13" hidden="true" onkeyPress="if (event.keyCode==13){return false;}">
 										<input id="commentBtn${status.index}" type="button" value="답글달기" hidden="true" 
 										onclick="hidTextAreaSubmit('${status.index}');">
@@ -210,9 +212,9 @@
 							<td style="text-align: left; color: gray;" width="20%">
 								<fmt:formatDate value="${review.reviewDate}" pattern="yy.MM.dd (kk:mm:ss)"/>
 								<c:if test="${
-								(sessionScope.user.name eq board.writer) || 
+								(sessionScope.user.userNo eq board.boardWriterNo) || 
 								(sessionScope.user.userNo eq 0) || 
-								(sessionScope.user.name eq review.reviewWriter)}">
+								(sessionScope.user.userNo eq review.reviewWriterNo)}">
 									<input type="button" class="btn btn-warning" value="삭제" onclick="javascript:removeReview('${board.boardNo}','${review.reviewNo}');">
 								</c:if>
 							</td>
@@ -230,9 +232,9 @@
 									<td style="color: gray;">
 										<fmt:formatDate value="${comment.reviewDate}" pattern="yy.MM.dd (kk:mm:ss)"/>
 											<c:if test="${
-												(sessionScope.user.name eq board.writer) || 
+												(sessionScope.user.userNo eq board.boardWriterNo) || 
 												(sessionScope.user.userNo eq 0) || 
-												(sessionScope.user.name eq review.reviewWriter)}">
+												(sessionScope.user.userNo eq comment.reviewWriterNo)}">
 												<input type="button" class="btn btn-warning" value="삭제" onclick="javascript:removeReview('${board.boardNo}','${comment.reviewNo}');">
 											</c:if>
 									</td>

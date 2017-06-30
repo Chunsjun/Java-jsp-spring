@@ -5,6 +5,7 @@ import java.sql.Date;
 
 public class Board extends Paging implements Serializable {
 	private int boardNo;
+	private int boardWriterNo;
 	private String title;
 	private String content;
 	private String writer;
@@ -13,8 +14,9 @@ public class Board extends Paging implements Serializable {
 	private int reviewCount;
 	private int fileStatus;
 
-	public Board(int boardNo, String title, String content, String writer, Date date, int view, int reviewCount, int fileStatus) {
+	public Board(int boardNo, int boardWriterNo, String title, String content, String writer, Date date, int view, int reviewCount, int fileStatus) {
 		this.boardNo = boardNo;
+		this.boardWriterNo = boardWriterNo;
 		this.title = title;
 		this.content = content;
 		this.writer = writer;
@@ -27,6 +29,14 @@ public class Board extends Paging implements Serializable {
 	public Board() {
 	}
 	
+	public int getBoardWriterNo() {
+		return boardWriterNo;
+	}
+
+	public void setBoardWriterNo(int boardWriterNo) {
+		this.boardWriterNo = boardWriterNo;
+	}
+
 	public int getFileStatus() {
 		return fileStatus;
 	}

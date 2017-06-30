@@ -46,7 +46,7 @@
      var filePath = fileObj.value;
      var fileName = filePath.substring(filePath.lastIndexOf("\\")+1);
      var fileKind = fileName.split(".")[1];
-     if(fileKind != "jpg" && fileKind != "gif" && fileKind != "png" && fileKind != "jpeg")
+     if(fileKind != "jpg" && fileKind != "JPG" && fileKind != "gif" && fileKind != "png" && fileKind != "jpeg")
      {
       alert("jpg, gif, png, jpeg 확장자를 가진 이미지 파일만 올려주세요.");
       document.getElementById("imgInp").value = "";

@@ -71,6 +71,7 @@ public class BoardController {
 		
 		user = (User) session.getAttribute("user");
 		board.setWriter(user.getName());
+		board.setBoardWriterNo(user.getUserNo());
 		
 		//--------------------- 파일 업로드 관련 코드 부분 -------------------------//
 		board.setTitle(multi.getParameter("title"));
@@ -211,6 +212,7 @@ public class BoardController {
 		} else {
 			review.setBoardNo(boardNo);
 			review.setReviewWriter(user.getName());
+			review.setReviewWriterNo(user.getUserNo());
 			this.boardService.review(review);
 			return new ModelAndView(redirectView);
 		}
@@ -238,6 +240,7 @@ public class BoardController {
 		review.setReviewWriter(user.getName());
 		review.setBoardNo(boardNo);
 		review.setParent(reviewNo);
+		review.setReviewWriterNo(user.getUserNo());
 		this.boardService.writeComment(review);
 
 		return new ModelAndView(redirectView);

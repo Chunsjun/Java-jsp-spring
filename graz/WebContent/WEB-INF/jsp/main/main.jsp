@@ -18,7 +18,7 @@
 			<td>
 				<div align="center">
 					<h1>Coffee Graz</h1>
-					<img src="/img/graz_coffee.jpg" align="middle" width="80%" height="70%" class="img-responsive img-rounded">
+					<img src="/img/graz_coffee.jpg" align="middle" class="img-responsive img-rounded">
 				</div>
 			</td>
 		</tr>

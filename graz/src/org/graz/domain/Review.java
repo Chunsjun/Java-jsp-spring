@@ -11,13 +11,14 @@ public class Review implements Serializable{
 	private String reviewContent;
 	private Date reviewDate;
 	private int parent;
+	private int reviewWriterNo;
 	private List<Review> comment;
 	
 	
 	public Review(){
 	}
 	
-	public Review(int boardNo, int reviewNo, String reviewWriter, String reviewContent, Date reviewDate, int parent, List<Review> comment){
+	public Review(int boardNo, int reviewNo, String reviewWriter, String reviewContent, Date reviewDate, int parent, List<Review> comment, int reviewWriterNo){
 		this.boardNo = boardNo;
 		this.reviewNo = reviewNo;
 		this.reviewWriter = reviewWriter;
@@ -25,6 +26,15 @@ public class Review implements Serializable{
 		this.reviewDate = reviewDate;
 		this.parent = parent;
 		this.comment = comment;
+		this.reviewWriterNo = reviewWriterNo;
+	}
+
+	public int getReviewWriterNo() {
+		return reviewWriterNo;
+	}
+
+	public void setReviewWriterNo(int reviewWriterNo) {
+		this.reviewWriterNo = reviewWriterNo;
 	}
 
 	public List<Review> getComment() {

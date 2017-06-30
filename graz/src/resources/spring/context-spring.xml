@@ -20,4 +20,26 @@
 		<property name="prefix" value="/WEB-INF/jsp"/>
 		<property name="suffix" value=".jsp"/>
 	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/graz/**"/>
+			<mvc:exclude-mapping path="/graz/main"/>
+			<mvc:exclude-mapping path="/graz/login"/>
+			<mvc:exclude-mapping path="/graz/join"/>
+			<mvc:exclude-mapping path="/graz/board/**"/>
+			<mvc:exclude-mapping path="/graz/info"/>
+			<mvc:exclude-mapping path="/graz/check"/>
+			<mvc:exclude-mapping path="/graz/find"/>
+			<mvc:exclude-mapping path="/graz/emailCheck"/>
+			<bean class="org.graz.interceptors.MainInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/graz/viewUsers"/>
+			<mvc:mapping path="/graz/usersOut/**"/>
+			<mvc:mapping path="/graz/userIn/**"/>
+			<mvc:mapping path="/graz/deleteUser/**"/>
+			<bean class="org.graz.interceptors.AdminInterceptor"/>			
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>
