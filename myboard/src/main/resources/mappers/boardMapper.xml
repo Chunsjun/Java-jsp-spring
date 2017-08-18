@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.myboard.mapper.boardMapper">
+
+	<sql id="tbl_board_select">
+		SELECT BNO, TITLE, CONTENT, WRITER, DATE, VIEWCNT, BPW
+		FROM TBL_BOARD
+	</sql>
+	
+	<select id="list" parameterType="BoardVO" resultType="BoardVO">
+		<include refid="tbl_board_select"/>
+		ORDER BY BNO DESC
+		LIMIT #{startNum}, #{listSize}
+	</select>
+	<select id="cnt" resultType="int">
+		SELECT COUNT(*) FROM TBL_BOARD	
+	</select>
+	<select id="view" parameterType="int" resultType="BoardVO">
+		<include refid="tbl_board_select"/>
+		WHERE BNO = #{bno}
+	</select>
+	
+	<insert id="write" parameterType="BoardVO">
+		INSERT INTO TBL_BOARD (TITLE, CONTENT, WRITER, BPW)
+		VALUES(#{title},#{content},#{writer},#{bpw})
+	</insert>
+	
+	<delete id="delete" parameterType="BoardVO">
+		DELETE FROM TBL_BOARD WHERE BNO = #{bno} AND BPW = #{bpw}
+	</delete>
+	
+</mapper>

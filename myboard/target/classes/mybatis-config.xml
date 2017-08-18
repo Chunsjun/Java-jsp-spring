@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<!-- 이래 해놓으면 *Mapper.xml 에서  resultType = "org.zerock.domain." 을 생략하고 *VO으로 사용가능 -->
+		<package name="org.myboard.domain"/> 
+	</typeAliases>
+</configuration>
