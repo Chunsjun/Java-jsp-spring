@@ -4,17 +4,32 @@
 <mapper namespace="org.myboard.mapper.boardMapper">
 
 	<sql id="tbl_board_select">
-		SELECT BNO, TITLE, CONTENT, WRITER, DATE, VIEWCNT, BPW
+		SELECT BNO, TITLE, CONTENT, WRITER, DATE, VIEWCNT, UNO
 		FROM TBL_BOARD
+	</sql>
+	<sql id="tbl_board_search">
+		<where>
+			<if test="searchType == 'title' and searchKeyword != null">
+				AND TITLE LIKE CONCAT('%',#{searchKeyword},'%')
+			</if>
+			<if test="searchType == 'content' and searchKeyword != null">
+				AND CONTENT LIKE CONCAT('%',#{searchKeyword},'%')
+			</if>
+			<if test="searchType == 'writer' and searchKeyword != null">
+				AND WRITER LIKE CONCAT('%',#{searchKeyword},'%')
+			</if>
+		</where>
 	</sql>
 	
 	<select id="list" parameterType="BoardVO" resultType="BoardVO">
 		<include refid="tbl_board_select"/>
+		<include refid="tbl_board_search"/>
 		ORDER BY BNO DESC
 		LIMIT #{startNum}, #{listSize}
 	</select>
-	<select id="cnt" resultType="int">
-		SELECT COUNT(*) FROM TBL_BOARD	
+	<select id="cnt" parameterType="BoardVO" resultType="int">
+		SELECT COUNT(*) FROM TBL_BOARD
+		<include refid="tbl_board_search"/>
 	</select>
 	<select id="view" parameterType="int" resultType="BoardVO">
 		<include refid="tbl_board_select"/>
@@ -22,12 +37,35 @@
 	</select>
 	
 	<insert id="write" parameterType="BoardVO">
-		INSERT INTO TBL_BOARD (TITLE, CONTENT, WRITER, BPW)
-		VALUES(#{title},#{content},#{writer},#{bpw})
+		INSERT INTO TBL_BOARD (TITLE, CONTENT, WRITER, UNO)
+		VALUES(#{title},#{content},#{writer},#{uno})
 	</insert>
 	
 	<delete id="delete" parameterType="BoardVO">
-		DELETE FROM TBL_BOARD WHERE BNO = #{bno} AND BPW = #{bpw}
+		DELETE FROM TBL_BOARD WHERE BNO = #{bno} AND UNO = #{uno}
 	</delete>
+	
+	<update id="update" parameterType="BoardVO">
+		UPDATE TBL_BOARD SET TITLE = #{title}, CONTENT = #{content} WHERE BNO = #{bno}
+	</update>
+	<update id="viewUp" parameterType="int">
+		UPDATE TBL_BOARD SET VIEWCNT = 
+		(SELECT VIEWCNT FROM 
+		(SELECT VIEWCNT FROM TBL_BOARD WHERE BNO = #{bno})AS VIEWCNT)+1 
+		WHERE BNO = #{bno}
+	</update>
+	
+	<!-- 답글전용 -->
+	<insert id="rWrite" parameterType="ReviewVO">
+		INSERT INTO TBL_REVIEW
+		(BNO, UNO, WRITER, CONTENT)
+		VALUES(#{bno}, #{uno}, (SELECT NAME FROM TBL_USER WHERE UNO = #{uno}), #{content})
+	</insert>
+	
+	<select id="rList" parameterType="int" resultType="ReviewVO">
+		SELECT * FROM TBL_REVIEW
+		WHERE BNO = #{bno}
+	</select>
+	
 	
 </mapper>

@@ -9,6 +9,12 @@
 	function golist(){
 		location.href = "/list";
 	}
+	
+	function lengthCheck(obj){
+		var str = obj.value;
+		var str_length = str.length;
+		document.getElementById('lengthInfo').innerText = str_length + " / 1000";
+	}
 </script>
 <title>::: ChanBoard :::</title>
 </head>
@@ -19,19 +25,17 @@
 	<table class="table">
 		<tr>
 			<th>제목</th>
-			<td><input type="text" name="title" class="form-control"/></td>
+			<td><input type="text" name="title" class="form-control" placeholder="최대 20자" maxlength="20"/></td>
 		</tr>
 		<tr>
 			<th>내용</th>
-			<td><textarea rows="10" cols="30" name="content" class="form-control"></textarea></td>
+			<td><textarea oninput="javascript:lengthCheck(this);" rows="10" cols="30" name="content" class="form-control" placeholder="최대  1000자" maxlength="1000"></textarea>
+			<label id="lengthInfo"></label>
+			</td>
 		</tr>
 		<tr>
 			<th>작성자</th>
-			<td><input type="text" name="writer" class="form-control"/></td>
-		</tr>
-		<tr>
-			<th>비밀번호</th>
-			<td><input type="password" name="bpw" class="form-control"/></td>
+			<td><c:out value="${sessionScope.user.name}"/></td>
 		</tr>
 		<tr>
 			<td colspan="2" align="center">

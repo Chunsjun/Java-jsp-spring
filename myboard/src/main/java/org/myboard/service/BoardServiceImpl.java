@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myboard.domain.BoardVO;
+import org.myboard.domain.ReviewVO;
 import org.myboard.persistence.BoardDAO;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,24 @@ public class BoardServiceImpl implements BoardService{
 	}
 
 	@Override
-	public int cnt() {
-		return dao.cnt();
+	public int cnt(BoardVO vo) {
+		return dao.cnt(vo);
+	}
+
+	@Override
+	public void update(BoardVO vo) {
+		dao.update(vo);
+	}
+
+	/*---------답글 전용----------*/
+	
+	@Override
+	public void rWrite(ReviewVO vo) {
+		dao.rWrite(vo);
+	}
+
+	@Override
+	public List<ReviewVO> rList(int bno) {
+		return dao.rList(bno);
 	}
 }

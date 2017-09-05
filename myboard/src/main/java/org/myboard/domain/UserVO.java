@@ -1,27 +1,27 @@
 package org.myboard.domain;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class UserVO {
 	private int uno;
 	private String id;
 	private String pw;
 	private String name;
-	private String birth;
 	private String email;
 	private Date date;
+	private int status;
 	
 	public UserVO(){
 	}
 	
-	public UserVO(int uno, String id, String pw, String name, String birth, String email, Date date){
+	public UserVO(int uno, String id, String pw, String name, String email, Date date, int status){
 		this.uno = uno;
 		this.id = id;
 		this.pw = pw;
 		this.name = name;
-		this.birth = birth;
 		this.email = email;
 		this.date = date;
+		this.status = status;
 	}
 
 	public int getUno() {
@@ -56,14 +56,6 @@ public class UserVO {
 		this.name = name;
 	}
 
-	public String getBirth() {
-		return birth;
-	}
-
-	public void setBirth(String birth) {
-		this.birth = birth;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -79,5 +71,14 @@ public class UserVO {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	
 	
 }

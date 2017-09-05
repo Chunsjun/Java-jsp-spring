@@ -2,10 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.myboard.mapper.userMapper">
+	<sql id="tbl_user_select">
+		SELECT UNO, ID, PW, NAME, EMAIL, DATE, STATUS
+		FROM TBL_USER
+	</sql>
+	
+	<select id="login" parameterType="UserVo" resultType="UserVo">
+		<include refid="tbl_user_select"/>
+		WHERE ID = #{id} AND PW = #{pw}
+	</select>
+	<select id="viewUser" parameterType="int" resultType="UserVo">
+		<include refid="tbl_user_select"/>
+		WHERE UNO = #{uno}
+	</select>
+	
 	<insert id="join" parameterType="UserVo">
 		INSERT INTO TBL_USER
-		(ID, PW, NAME, BIRTH, EMAIL)
+		(ID, PW, NAME, EMAIL)
 		VALUES
-		(#{id},#{pw},#{name},#{birth},#{email})
+		(#{id},#{pw},#{name},#{email})
 	</insert>
+	
+	<update id="outUser" parameterType="int">
+		UPDATE TBL_USER
+		SET STATUS = 1
+		WHERE UNO = #{uno}
+	</update>
 </mapper>

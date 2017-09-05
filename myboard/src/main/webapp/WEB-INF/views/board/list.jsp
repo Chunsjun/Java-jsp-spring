@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <script type="text/javascript">
-	function writeBtn(){
+	function writeBtn(value){
 		location.href="/write";
 	}
 </script>
@@ -38,7 +38,7 @@
 				<c:out value="${list.writer}"/>
 			</td>
 			<td>
-				<c:out value="${list.date}"/>
+				<fmt:formatDate value="${list.date}" pattern="yyyy.MM.dd (kk:mm:ss)"/>
 			</td>
 			<td>
 				<c:out value="${list.viewcnt}"/>
@@ -61,7 +61,33 @@
 				<c:out value="${navigator}" escapeXml="false"/>
 			</td>
 		</tr>
+		<tr>
+			<td colspan="5" align="center">
+				<form action="/list" id="searchForm" method="post">
+				<table>
+				<tr>
+					<td>
+					<select name="searchType" class="form-control">
+						<option id="title" value="title" <c:if test="${search.searchType eq 'title'}">selected="selected"</c:if>>제목</option>
+						<option id="content" value="content" <c:if test="${search.searchType eq 'content'}">selected="selected"</c:if>>내용</option>
+						<option id="writer" value="writer" <c:if test="${search.searchType eq 'writer'}">selected="selected"</c:if>>글쓴이</option>
+					</select>
+					</td>
+					<td>
+						<input type="text" name="searchKeyword" value="<c:out value='${search.searchKeyword}'/>" class="form-control">
+					</td>
+					<td>
+						<input type="button" value="검색" onclick="goPage(1);" class="btn btn-primary">
+					</td>
+				</tr>
+				</table>
+				</form>
+			</td>
+		</tr>
 	</table>
+	<footer>
+		Copyright &copy;chunsjun.cafe24.com
+	</footer>
 </div>
 </body>
 </html>
