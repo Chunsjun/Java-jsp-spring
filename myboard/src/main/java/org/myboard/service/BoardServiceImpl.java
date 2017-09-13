@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.myboard.domain.BoardVO;
+import org.myboard.domain.FileVO;
 import org.myboard.domain.ReviewVO;
 import org.myboard.persistence.BoardDAO;
 import org.springframework.stereotype.Service;
@@ -56,4 +57,31 @@ public class BoardServiceImpl implements BoardService{
 	public List<ReviewVO> rList(int bno) {
 		return dao.rList(bno);
 	}
+	
+	@Override
+	public void cWrite(ReviewVO vo) {
+		dao.cWrite(vo);
+	}
+
+	@Override
+	public List<ReviewVO> cList(int bno) {
+		return dao.cList(bno);
+	}
+
+	@Override
+	public void rcDelete(int rno) {
+		dao.rcDelete(rno);
+	}
+
+	/*파일 전용*/
+	@Override
+	public void fileUpload(FileVO vo) {
+		dao.fileUpload(vo);
+	}
+
+	@Override
+	public FileVO fileLoad(FileVO vo) {
+		return dao.fileLoad(vo);
+	}
+
 }

@@ -32,4 +32,9 @@ public class UserServiceImpl implements UserService{
 		dao.outUser(uno);
 	}
 
+	@Override
+	public UserVO checkUser(UserVO vo) {
+		return dao.checkUser(vo);
+	}
+
 }

@@ -25,9 +25,21 @@ public class UserController {
 	
 	@RequestMapping(value = "/join", method = RequestMethod.POST)
 	public ModelAndView joinW(UserVO vo){
-		ModelAndView mv = new ModelAndView("/user/login");
-		service.join(vo);
-		return mv;
+		
+		if(service.checkUser(vo) == null){
+			ModelAndView mv = new ModelAndView("/user/login");
+			service.join(vo);
+			StringBuffer sb = new StringBuffer();
+			sb.append("alert('가입완료');");
+			mv.addObject("joinCplt", sb.toString());
+			return mv;
+		}else{
+			ModelAndView mv = new ModelAndView("/user/join");
+			StringBuffer sb = new StringBuffer();
+			sb.append("alert('이미 있는 아이디 입니다.');");
+			mv.addObject("alert", sb.toString());
+			return mv;
+		}
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)

@@ -15,6 +15,10 @@
 		<include refid="tbl_user_select"/>
 		WHERE UNO = #{uno}
 	</select>
+	<select id="checkUser" parameterType="UserVo" resultType="UserVo">
+		<include refid="tbl_user_select"/>
+		WHERE ID = #{id}
+	</select>
 	
 	<insert id="join" parameterType="UserVo">
 		INSERT INTO TBL_USER

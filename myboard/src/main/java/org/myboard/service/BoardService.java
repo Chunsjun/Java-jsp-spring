@@ -3,6 +3,7 @@ package org.myboard.service;
 import java.util.List;
 
 import org.myboard.domain.BoardVO;
+import org.myboard.domain.FileVO;
 import org.myboard.domain.ReviewVO;
 
 public interface BoardService {
@@ -18,4 +19,11 @@ public interface BoardService {
 	/*답글 전용*/
 	public void rWrite(ReviewVO vo);
 	public List<ReviewVO> rList(int bno);
+	public void cWrite(ReviewVO vo);
+	public List<ReviewVO> cList(int bno);
+	public void rcDelete(int rno);
+	
+	/*파일 전용*/
+	public void fileUpload(FileVO vo);
+	public FileVO fileLoad(FileVO vo);
 }

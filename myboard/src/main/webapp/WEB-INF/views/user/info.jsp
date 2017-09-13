@@ -21,7 +21,13 @@
 <%@include file="/WEB-INF/views/top.jsp"%>
 <table>
 	<thead>
-		<h2>가입정보</h2>
+		<tr>
+			<td align="center">
+				<h1>
+					가입정보
+				</h1>
+			</td>
+		</tr>
 	</thead>
 	<tbody>
 	<tr>

@@ -1,6 +1,7 @@
 package org.myboard.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class ReviewVO {
 	private int rno;
@@ -9,17 +10,21 @@ public class ReviewVO {
 	private String writer;
 	private String content;
 	private Date date;
+	private int parent;
+	private List<ReviewVO> comment;
 	
 	public ReviewVO(){
 	}
 	
-	public ReviewVO(int rno, int bno, int uno, String writer, String content, Date date){
+	public ReviewVO(int rno, int bno, int uno, String writer, String content, Date date, int parent, List<ReviewVO> comment){
 		this.rno = rno;
 		this.bno = bno;
 		this.uno = uno;
 		this.writer = writer;
 		this.content = content;
 		this.date = date;
+		this.parent = parent;
+		this.comment = comment;
 	}
 
 	public int getRno() {
@@ -69,5 +74,22 @@ public class ReviewVO {
 	public void setWriter(String writer) {
 		this.writer = writer;
 	}
+
+	public List<ReviewVO> getComment() {
+		return comment;
+	}
+
+	public void setComment(List<ReviewVO> comment) {
+		this.comment = comment;
+	}
+
+	public int getParent() {
+		return parent;
+	}
+
+	public void setParent(int parent) {
+		this.parent = parent;
+	}
+	
 	
 }

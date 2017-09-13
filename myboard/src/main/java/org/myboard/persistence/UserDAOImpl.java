@@ -33,4 +33,9 @@ public class UserDAOImpl implements UserDAO{
 		session.update(namespace+".outUser", uno);
 	}
 
+	@Override
+	public UserVO checkUser(UserVO vo) {
+		return session.selectOne(namespace+".checkUser", vo);
+	}
+
 }

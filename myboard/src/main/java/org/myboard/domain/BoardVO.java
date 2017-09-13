@@ -10,11 +10,13 @@ public class BoardVO extends PageVO{
 	private String writer;
 	private Date date;
 	private int viewcnt;
+	private int reviewcnt;
+	private int fileStatus;
 
 	public BoardVO() {
 	}
 
-	public BoardVO(int bno, String title, String content, String writer, Date date, int viewcnt, int uno) {
+	public BoardVO(int bno, String title, String content, String writer, Date date, int viewcnt, int uno, int reviewcnt, int fileStatus) {
 		this.bno = bno;
 		this.title = title;
 		this.content = content;
@@ -22,6 +24,8 @@ public class BoardVO extends PageVO{
 		this.date = date;
 		this.viewcnt = viewcnt;
 		this.uno = uno;
+		this.reviewcnt = reviewcnt;
+		this.fileStatus = fileStatus;
 	}
 
 	public int getBno() {
@@ -80,4 +84,21 @@ public class BoardVO extends PageVO{
 		this.uno = uno;
 	}
 
+	public int getReviewcnt() {
+		return reviewcnt;
+	}
+
+	public void setReviewcnt(int reviewcnt) {
+		this.reviewcnt = reviewcnt;
+	}
+
+	public int getFileStatus() {
+		return fileStatus;
+	}
+
+	public void setFileStatus(int fileStatus) {
+		this.fileStatus = fileStatus;
+	}
+
+	
 }

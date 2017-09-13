@@ -20,9 +20,17 @@
 			</if>
 		</where>
 	</sql>
+	<sql id="tbl_review_select">
+		SELECT RNO, BNO, UNO, WRITER, CONTENT, DATE, PARENT
+		FROM TBL_REVIEW
+	</sql>
 	
 	<select id="list" parameterType="BoardVO" resultType="BoardVO">
-		<include refid="tbl_board_select"/>
+		SELECT * FROM 
+		(SELECT BNO, TITLE, CONTENT, WRITER, DATE, VIEWCNT, UNO,
+		(SELECT DISTINCT COUNT(*) AS FILESTATUS FROM TBL_FILE WHERE TBL_BOARD.BNO = TBL_FILE.BNO)FILESTATUS,
+		(SELECT COUNT(*) AS REVIEWCNT FROM TBL_REVIEW WHERE TBL_BOARD.BNO = TBL_REVIEW.BNO)REVIEWCNT 
+		FROM TBL_BOARD)REVIEWCNT
 		<include refid="tbl_board_search"/>
 		ORDER BY BNO DESC
 		LIMIT #{startNum}, #{listSize}
@@ -61,10 +69,36 @@
 		(BNO, UNO, WRITER, CONTENT)
 		VALUES(#{bno}, #{uno}, (SELECT NAME FROM TBL_USER WHERE UNO = #{uno}), #{content})
 	</insert>
-	
 	<select id="rList" parameterType="int" resultType="ReviewVO">
-		SELECT * FROM TBL_REVIEW
-		WHERE BNO = #{bno}
+		<include refid="tbl_review_select"/>
+		WHERE BNO = #{bno} AND PARENT IS NULL
+	</select>
+	<insert id="cWrite" parameterType="ReviewVO">
+		INSERT INTO TBL_REVIEW
+		(BNO, UNO, WRITER, CONTENT, PARENT)
+		VALUES(#{bno}, #{uno}, (SELECT NAME FROM TBL_USER WHERE UNO = #{uno}), #{content}, #{parent})
+	</insert>
+	<select id="cList" parameterType="int" resultType="ReviewVO">
+		<include refid="tbl_review_select"/>
+		WHERE BNO = #{bno} AND PARENT IS NOT NULL
+	</select>
+	<delete id="rcDelete" parameterType="int">
+		DELETE FROM TBL_REVIEW 
+		WHERE RNO = #{rno}
+	</delete>
+	<select id="rcCount" parameterType="int">
+		SELECT COUNT(*) FROM TBL_REVIEW
+		WHERE BNO = {bno}
+	</select>
+	
+	<!-- 파일  전용 -->
+	<insert id="fileUpload" parameterType="FileVo">
+		INSERT INTO TBL_FILE (BNO, FILE_TITLE, FILE_PATH) VALUES 
+		((SELECT BNO FROM TBL_BOARD ORDER BY BNO DESC LIMIT 1),#{file_title},#{file_path})
+	</insert>
+	<select id="fileLoad" parameterType="FileVo" resultType="FileVo">
+		SELECT * FROM TBL_FILE WHERE
+		BNO = #{bno}
 	</select>
 	
 	

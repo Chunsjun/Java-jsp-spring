@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.ibatis.session.SqlSession;
 import org.myboard.domain.BoardVO;
+import org.myboard.domain.FileVO;
 import org.myboard.domain.ReviewVO;
 import org.springframework.stereotype.Repository;
 
@@ -57,5 +58,32 @@ public class BoardDAOImpl implements BoardDAO{
 	public List<ReviewVO> rList(int bno) {
 		return session.selectList(namespace+".rList", bno);
 	}
+	
+	@Override
+	public void cWrite(ReviewVO vo) {
+		session.insert(namespace+".cWrite", vo);
+	}
+
+	@Override
+	public List<ReviewVO> cList(int bno) {
+		return session.selectList(namespace+".cList", bno);
+	}
+
+	@Override
+	public void rcDelete(int rno) {
+		session.delete(namespace+".rcDelete", rno);
+	}
+
+	/*파일 전용*/
+	@Override
+	public void fileUpload(FileVO vo) {
+		session.insert(namespace+".fileUpload", vo);
+	}
+
+	@Override
+	public FileVO fileLoad(FileVO vo) {
+		return session.selectOne(namespace+".fileLoad", vo);
+	}
+
 	
 }

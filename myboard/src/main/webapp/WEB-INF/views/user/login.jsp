@@ -5,14 +5,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<script type="text/javascript">
+	<c:out value="${joinCplt}" escapeXml="false"/>
+</script>
 <title>::: ChanBoard :::</title>
 </head>
 <body>
-<div class="container" align="center">
+<div class="container">
 <%@include file="/WEB-INF/views/top.jsp"%>
       <form action="/login" method="post" class="form-signin">
         <h2 class="form-signin-heading">Login</h2>
-		<table>
+		<table class="table">
 		<tr>
 			<td>
 		        <input type="text" name="id" class="form-control" placeholder="ID" required>

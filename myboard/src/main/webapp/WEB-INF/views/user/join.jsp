@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <script type="text/javascript">
 	function id_check(value) {
-		if (value.length < 6) {
+		if (value.length < 6 || value.trim()=="" || value.length > 16) {
 			document.getElementById('idChecker').innerHTML = "<font color=red>6 ~ 16자 이상의 아이디 입력</font>";
 			i = false;
 		} else {
@@ -16,7 +16,7 @@
 		}
 	}
 	function pw_check(value) {
-		if (value.length < 8) {
+		if (value.length < 8 || value.trim()=="" || value.length > 16) {
 			document.getElementById('pwChecker').innerHTML = "<font color=red>8 ~ 16자 이상의 비밀번호 입력</font>";
 			p = false;
 		} else {
@@ -26,7 +26,7 @@
 	}
 	function rpw_check(value) {
 		var pw = document.getElementById('pw').value;
-		if (value != pw) {
+		if (value != pw || value.length < 8 || value.trim()=="" || value.length > 16) {
 			document.getElementById('rpwChecker').innerHTML = "<font color=red>비밀번호가 일치하지않음!</font>";
 			r = false;
 		} else {
@@ -35,7 +35,7 @@
 		}
 	}
 	function name_check(value) {
-		if (value.length < 2) {
+		if (value.length < 2 || value.trim() == "" || value.length > 10) {
 			document.getElementById('nameChecker').innerHTML = "<font color=red>2 ~ 10자 이상의 이름 입력</font>";
 			n = false;
 		} else {
@@ -45,20 +45,22 @@
 	}
 	function joinBtn() {
 		var form = document.getElementById('joinForm');
-		if(i==true && p==true && r==true && n==true){
+		if(i==true && p==true && r==true && n==true)
+		{
 			form.submit();
 		}else{
 			alert("정상적으로 입력이 되지 않았습니다.");
 		}
 	}
+	<c:out value="${alert}" escapeXml="false"/>
 </script>
 <title>::: ChanBoard :::</title>
 </head>
 <body>
-	<div align="center" class="container">
+	<div class="container">
 		<%@include file="/WEB-INF/views/top.jsp"%>
 		<form action="/join" method="post" id="joinForm">
-			<table>
+			<table class="table">
 				<tr>
 					<td>
 						<h1>Join Us</h1>
@@ -66,29 +68,29 @@
 				</tr>
 				<tr>
 					<td><input type="text" name="id" class="form-control"
-						placeholder="ID" onkeyup="id_check(this.form.id.value);">
+						placeholder="ID" oninput="id_check(this.form.id.value);" maxlength="16">
 						<p id="idChecker"></td>
 				</tr>
 				<tr>
 					<td><input type="password" name="pw" class="form-control"
-						placeholder="PASSWORD" onkeyup="pw_check(this.form.pw.value);"
-						id="pw">
+						placeholder="PASSWORD" oninput="pw_check(this.form.pw.value);"
+						id="pw" maxlength="16">
 						<p id="pwChecker"></td>
 				</tr>
 				<tr>
 					<td><input type="password" name="rpw" class="form-control"
 						placeholder="REPEAT-PASSWORD"
-						onkeyup="rpw_check(this.form.rpw.value);">
+						oninput="rpw_check(this.form.rpw.value);" maxlength="16">
 						<p id="rpwChecker"></td>
 				</tr>
 				<tr>
 					<td><input type="text" name="name" class="form-control"
-						placeholder="NAME" onkeyup="name_check(this.form.name.value);">
+						placeholder="NAME" oninput="name_check(this.form.name.value);" maxlength="10">
 						<p id="nameChecker"></td>
 				</tr>
 				<tr>
 					<td><input type="text" name="email" class="form-control"
-						placeholder="EMAIL"></td>
+						placeholder="EMAIL" maxlength="16"></td>
 				</tr>
 				<tr>
 					<td style="padding: 10px;"><input type="button" value="가입"

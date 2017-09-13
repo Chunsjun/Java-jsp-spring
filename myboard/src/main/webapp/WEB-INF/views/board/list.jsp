@@ -15,14 +15,17 @@
 <body>
 <div class="container">
 <%@include file="/WEB-INF/views/top.jsp"%>
-	<table class="table">
+	<table class="table table-striped">
+		<thead>
 		<tr>
-			<th width="10%">글번호</th>
-			<th width="60%">제목</th>
-			<th width="10%">작성자</th>
+			<th width="15%">번호</th>
+			<th width="45%">제목</th>
+			<th width="15%">작성자</th>
 			<th width="10%">작성일</th>
-			<th width="10%">조회수</th>
+			<th width="auto%">조회수</th>
 		</tr>
+		</thead>
+		<tbody>
 		<c:if test="${!empty board}">
 		<c:forEach items="${board}" var="list" varStatus="status">
 		<tr>
@@ -32,13 +35,19 @@
 			<td>
 			<a href="view/${list.bno}">
 				<c:out value="${list.title}"/>
+				<c:if test="${list.reviewcnt != 0}">
+					(<c:out value="${list.reviewcnt}"/>)
+				</c:if>
+				<c:if test="${list.fileStatus != 0}">
+					<img alt="" src="/resources/img/fileStatus.png">
+				</c:if>
 			</a>
 			</td>
 			<td>
 				<c:out value="${list.writer}"/>
 			</td>
 			<td>
-				<fmt:formatDate value="${list.date}" pattern="yyyy.MM.dd (kk:mm:ss)"/>
+				<fmt:formatDate value="${list.date}" pattern="yy.MM.dd"/>
 			</td>
 			<td>
 				<c:out value="${list.viewcnt}"/>
@@ -52,7 +61,7 @@
 			</tr>
 		</c:if>
 		<tr>
-			<td colspan="5" align="center">
+			<td colspan="5" align="right">
 				<input type="button" value="글쓰기" onclick="javascript:writeBtn();" class="btn btn-default"/>
 			</td>
 		</tr>
@@ -84,6 +93,7 @@
 				</form>
 			</td>
 		</tr>
+		</tbody>
 	</table>
 	<footer>
 		Copyright &copy;chunsjun.cafe24.com

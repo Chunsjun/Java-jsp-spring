@@ -1,6 +1,8 @@
 package org.myboard.controller;
 
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -8,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.myboard.domain.BoardVO;
+import org.myboard.domain.FileVO;
 import org.myboard.domain.PageInfo;
 import org.myboard.domain.ReviewVO;
 import org.myboard.domain.UserVO;
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 @Controller
 public class BoardController {
@@ -53,29 +59,70 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
-	public ModelAndView writeW(BoardVO vo, HttpSession session) {
+	public ModelAndView writeW(BoardVO bvo, FileVO fvo, HttpSession session, HttpServletRequest request)throws IOException{
 		RedirectView redirectView = new RedirectView("/list");
 		redirectView.setExposeModelAttributes(false);
 		
-		UserVO uvo = (UserVO) session.getAttribute("user");
-		vo.setWriter(uvo.getName());
-		vo.setUno(uvo.getUno());
+		int sizeLimit = 1024*1024*10; //10mbyte
+		String savePath = request.getServletContext().getRealPath("resources/files"); // 이클립스 개발용
+		//String savePath = "/home/hosting_users/chunsjun/tomcat/webapps/ROOT/resources/files"; // cafe24 전용
 		
-		service.write(vo);
+		MultipartRequest multi = new MultipartRequest(request, savePath, sizeLimit, "utf-8", new DefaultFileRenamePolicy());
 
+		UserVO uvo = (UserVO) session.getAttribute("user");
+		bvo.setWriter(uvo.getName());
+		bvo.setUno(uvo.getUno());
+		bvo.setTitle(multi.getParameter("title"));
+		bvo.setContent(multi.getParameter("content"));
+		service.write(bvo);
+		
+		String fileName = multi.getFilesystemName("file");
+		if(fileName != null){
+			fvo.setFile_title(fileName);
+			fvo.setFile_path(savePath+"/"+fileName);
+			service.fileUpload(fvo);
+		}
+		
 		return new ModelAndView(redirectView);
 	}
 
-	@RequestMapping(value = "/view/{boardNo}", method = RequestMethod.GET)
-	public ModelAndView view(@PathVariable("boardNo") int bno) {
+	@RequestMapping(value = "/view/{bno}", method = RequestMethod.GET)
+	public ModelAndView view(@PathVariable("bno") int bno, FileVO fvo) {
 		ModelAndView mv = new ModelAndView("/board/view");
 		
 		BoardVO vo = service.view(bno);
+		if(vo == null){
+			ModelAndView mav = new ModelAndView("/index");
+			StringBuffer sb = new StringBuffer();
+			sb.append("alert('잘못된 접근입니다.')");
+			mav.addObject("alert", sb);
+			return mav;
+		}
+		
 		List<ReviewVO> rList = service.rList(bno);
+		List<ReviewVO> cList = service.cList(bno);
+		for(int i = 0; i < rList.size(); i ++){
+			List<ReviewVO> temp = new ArrayList<>();
+			for(int j = 0; j < cList.size(); j++){
+				if(rList.get(i).getRno() == cList.get(j).getParent()){
+					temp.add(cList.get(j));
+				}
+			}
+			rList.get(i).setComment(temp);
+		}
 		
 		String str = vo.getContent();
 		str = str.replace("\r\n", "<br>");
 		vo.setContent(str);
+		
+		fvo = service.fileLoad(fvo);
+		if(fvo != null){
+			str = fvo.getFile_path();
+			str = str.replace("C:\\WorkSpace\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp3\\wtpwebapps\\myboard\\", "/").replace("\\", "/"); // 이클립스 개발용
+			//str = str.replace("/home/hosting_users/chunsjun/tomcat/webapps/ROOT/", "/"); // cafe24 전용
+			fvo.setFile_path(str);
+			mv.addObject("file", fvo);
+		}
 
 		mv.addObject("view", vo);
 		mv.addObject("rList",rList);
@@ -140,6 +187,46 @@ public class BoardController {
 		if(uvo != null){
 			rvo.setUno(uvo.getUno());
 			service.rWrite(rvo);
+			return new ModelAndView(redirectView);
+		}else{
+			ModelAndView mv = new ModelAndView("/index");
+			StringBuffer sb = new StringBuffer();
+			sb.append("alert('잘못된 접근입니다.')");
+			mv.addObject("alert", sb);
+			return mv;
+		}
+	}
+	
+	@RequestMapping(value = "/commentW")
+	public ModelAndView commentW(ReviewVO rvo, UserVO uvo, HttpSession session){
+		RedirectView redirectView = new RedirectView("/view/"+rvo.getBno());
+		redirectView.setExposeModelAttributes(false);
+		
+		uvo = (UserVO) session.getAttribute("user");
+		rvo.setParent(rvo.getRno());
+		
+		if(uvo != null){
+			rvo.setUno(uvo.getUno());
+			service.cWrite(rvo);
+			return new ModelAndView(redirectView);
+		}else{
+			ModelAndView mv = new ModelAndView("/index");
+			StringBuffer sb = new StringBuffer();
+			sb.append("alert('잘못된 접근입니다.')");
+			mv.addObject("alert", sb);
+			return mv;
+		}
+	}
+	
+	@RequestMapping(value = "/reviewD/{bno}/{rno}")
+	public ModelAndView reviewD(@PathVariable int bno, @PathVariable int rno, UserVO uvo, HttpSession session){
+		RedirectView redirectView = new RedirectView("/view/"+bno);
+		redirectView.setExposeModelAttributes(false);
+		
+		uvo = (UserVO) session.getAttribute("user");
+		
+		if(uvo != null){
+			service.rcDelete(rno);
 			return new ModelAndView(redirectView);
 		}else{
 			ModelAndView mv = new ModelAndView("/index");

@@ -9,4 +9,6 @@ public interface UserService {
 	
 	public UserVO viewUser(int uno);
 	public void outUser(int uno);
+	
+	public UserVO checkUser(UserVO vo);
 }
