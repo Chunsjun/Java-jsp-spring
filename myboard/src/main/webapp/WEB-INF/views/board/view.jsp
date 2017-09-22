@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<%@include file="/WEB-INF/views/etc/scripts.jsp"%>
 <script type="text/javascript">
 	function golist(){
 		/* location.href = "/list"; */
@@ -36,17 +36,17 @@
 	}
 	
 	function hidTextAreaSubmit(index){
-		var comment_str = document.getElementById("comment"+index).value;
-		if(comment_str.length > 150 || comment_str.trim() == ""){
+		var commentStr = document.getElementById("comment"+index).value;
+		if(commentStr.length > 150 || commentStr.trim() == ""){
 			alert("답글은 공백이나 150자를 초과할수 없습니다.");
 		}else{
 			document.getElementById("commentForm"+index).submit();
 		}
 	}
 	
-	function reviewD(indexB,indexR){
+	function reviewDel(bno,rno){
 		if (confirm("정말 삭제하시겠습니까??") == true){
-			location.href = "/reviewD/"+indexB+"/"+indexR;
+			location.href = "/reviewD/"+bno+"/"+rno;
 		} else {
 		    return;
 		}
@@ -54,9 +54,9 @@
 	
 	function reviewBtn(){
 		var form = document.getElementById('reviewForm');
-		var review_str = document.getElementById('content').value;
+		var reviewStr = document.getElementById('content').value;
 		
-		if(review_str.length > 150 || review_str.trim() == ""){
+		if(reviewStr.length > 150 || reviewStr.trim() == ""){
 			alert('댓글은 공백이나 150자를 초과할수 없습니다.');
 		}else{
 			form.submit();
@@ -69,7 +69,7 @@
 </head>
 <body>
 <div class="container">
-<%@include file="/WEB-INF/views/top.jsp"%>
+<%@include file="/WEB-INF/views/etc/top.jsp"%>
 	<table class="table">
 		<tr>
 			<th>글번호</th>
@@ -167,7 +167,7 @@
 								(sessionScope.user.uno eq view.uno) || 
 								(sessionScope.user.uno eq 0) || 
 								(sessionScope.user.uno eq review.uno)}">
-							<input type="button" value="삭제" class="btn btn-default" onclick="reviewD('${review.bno}','${review.rno}');"/>
+							<input type="button" value="삭제" class="btn btn-default" onclick="reviewDel('${review.bno}','${review.rno}');"/>
 							</c:if>
 						</td>
 					</tr>
@@ -192,7 +192,7 @@
 									(sessionScope.user.uno eq view.uno) || 
 									(sessionScope.user.uno eq 0) || 
 									(sessionScope.user.uno eq comment.uno)}">
-										<input type="button" value="삭제" class="btn btn-default" onclick="reviewD('${comment.bno}','${comment.rno}');"/>
+										<input type="button" value="삭제" class="btn btn-default" onclick="reviewDel('${comment.bno}','${comment.rno}');"/>
 									</c:if>
 								</td>
 							</tr>

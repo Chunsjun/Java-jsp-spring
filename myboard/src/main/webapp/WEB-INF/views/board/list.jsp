@@ -1,20 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<%@include file="/WEB-INF/views/etc/scripts.jsp"%>
 <script type="text/javascript">
-	function writeBtn(value){
-		location.href="/write";
-	}
+	$(function(){
+		$('#writeBtn').click(function(){
+			$(location).attr('href','/write');
+		})
+	});
 </script>
 <title>::: ChanBoard :::</title>
 </head>
 <body>
 <div class="container">
-<%@include file="/WEB-INF/views/top.jsp"%>
+<%@include file="/WEB-INF/views/etc/top.jsp"%>
 	<table class="table table-striped">
 		<thead>
 		<tr>
@@ -22,7 +24,7 @@
 			<th width="45%">제목</th>
 			<th width="15%">작성자</th>
 			<th width="10%">작성일</th>
-			<th width="auto%">조회수</th>
+			<th width="auto">조회수</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -62,7 +64,7 @@
 		</c:if>
 		<tr>
 			<td colspan="5" align="right">
-				<input type="button" value="글쓰기" onclick="javascript:writeBtn();" class="btn btn-default"/>
+				<input type="button" id="writeBtn" value="글쓰기" class="btn btn-default"/>
 			</td>
 		</tr>
 		<tr>

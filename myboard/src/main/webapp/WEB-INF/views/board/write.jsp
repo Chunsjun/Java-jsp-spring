@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
+<meta charset="UTF-8">
+<%@include file="/WEB-INF/views/etc/scripts.jsp"%>
 <script type="text/javascript">
 	function golist(){
 		/* location.href = "/list"; */
@@ -11,18 +12,18 @@
 	
 	function lengthCheck(obj){
 		var str = obj.value;
-		var str_length = str.length;
-		document.getElementById('lengthInfo').innerText = str_length + " / 1000";
+		var strLength = str.length;
+		document.getElementById('lengthInfo').innerText = strLength + " / 1000";
 	}
 	
 	function writeBtn(){
-		var title_str = document.getElementById('title').value;
-		var content_str = document.getElementById('content').value;
+		var titleStr = document.getElementById('title').value;
+		var contentStr = document.getElementById('content').value;
 		var subForm = document.writeForm;
 		
-		if(title_str.length > 20 || title_str.trim() == ""){
+		if(titleStr.length > 20 || titleStr.trim() == ""){
 			alert('제목은 공백이나 20자를 넘길수 없습니다 !!');
-		}else if(content_str.length > 1000 || content_str.trim() == ""){
+		}else if(contentStr.length > 1000 || contentStr.trim() == ""){
 			alert('내용은 공백이나 1000자를 넘길수 없습니다 !!');
 		}else{
 			subForm.submit();
@@ -49,7 +50,7 @@
 <body>
 <!-- enctype="multipart/form-data"을 폼에 정의했을경우 action으로 전해지는 데이터가 request에 담기지 않는다. 대신 MultipartRequest 메소드를 사용하여 데이터 수신. -->
 <div class="container">
-<%@include file="/WEB-INF/views/top.jsp"%>
+<%@include file="/WEB-INF/views/etc/top.jsp"%>
 <form name="writeForm" action="/write" method="post" enctype="multipart/form-data" >
 	<table class="table">
 		<tr>

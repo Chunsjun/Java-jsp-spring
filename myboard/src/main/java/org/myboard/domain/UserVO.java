@@ -7,19 +7,17 @@ public class UserVO {
 	private String id;
 	private String pw;
 	private String name;
-	private String email;
 	private Date date;
 	private int status;
 	
 	public UserVO(){
 	}
 	
-	public UserVO(int uno, String id, String pw, String name, String email, Date date, int status){
+	public UserVO(int uno, String id, String pw, String name, Date date, int status){
 		this.uno = uno;
 		this.id = id;
 		this.pw = pw;
 		this.name = name;
-		this.email = email;
 		this.date = date;
 		this.status = status;
 	}
@@ -54,14 +52,6 @@ public class UserVO {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public Date getDate() {

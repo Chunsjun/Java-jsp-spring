@@ -5,20 +5,21 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<%@include file="/WEB-INF/views/etc/scripts.jsp"%>
 <script type="text/javascript"
 	src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=w_PbmPMvvatEUYzaCwJb&submodules=geocoder"></script>
 <title>::: ChanBoard :::</title>
 </head>
 <body>
+
 	<div class="container" align="center">
-		<%@include file="/WEB-INF/views/top.jsp"%>
+		<%@include file="/WEB-INF/views/etc/top.jsp"%>
 		<div id="map" style="width: 330px; height: 300px;"></div>
 	</div>
-</body>
-<footer>
+	
 	<script type="text/javascript">
 		/* -- 맵 생성 -- */
-		 var map = new naver.maps.Map('map', {
+		var map = new naver.maps.Map('map', {
 			center : new naver.maps.LatLng(36.992176, 127.089013),
 			zoom : 13,
 			zoomControl : true,
@@ -31,7 +32,7 @@
 			map : map
 		});
 
-		var contentString = ['TEST'].join('');
+		var contentString = [ 'TEST' ].join('');
 
 		var infowindow = new naver.maps.InfoWindow({
 			content : contentString
@@ -45,7 +46,7 @@
 			}
 		});
 
-		infowindow.open(map, marker); 
+		infowindow.open(map, marker);
 	</script>
-</footer>
+</body>
 </html>
