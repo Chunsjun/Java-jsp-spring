@@ -27,15 +27,21 @@
 		<beans:property name="maxInMemorySize" value="100000000" />
 	</beans:bean> -->
 	
-	<!-- <beans:bean id="interceptorForUser" class="org.myboard.interceptor.UserInterceptor"> </beans:bean>
+	<beans:bean id="interceptorForUser" class="org.myboard.interceptor.UserInterceptor"/>
 	<interceptors>
   		<interceptor>
    		<mapping path="/**/"/>
    		<exclude-mapping path="/login"/>
    		<exclude-mapping path="/join"/>
+   		<exclude-mapping path="/list"/>
+   		<exclude-mapping path="/view/**"/>
+   		<exclude-mapping path="/map"/>
+   		<exclude-mapping path="/"/>
+   		<exclude-mapping path="/resources/**"/>
+   		<exclude-mapping path="/about"/>
    		<beans:ref bean="interceptorForUser"/>
   		</interceptor>
- 	</interceptors>  -->
+ 	</interceptors> 
 	
 	<context:component-scan base-package="org.myboard.controller" />
 </beans:beans>

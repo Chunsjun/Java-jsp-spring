@@ -89,7 +89,6 @@ public class UserController {
 			mv.addObject("user",vo);
 			return mv;
 		}
-		
 	}
 	
 	public ModelAndView userInfoW(){
@@ -108,10 +107,8 @@ public class UserController {
 		}else{
 			RedirectView rv = new RedirectView("/list");
 			rv.setExposeModelAttributes(false);
-			
 			service.outUser(uno);
 			session.removeAttribute("user");
-			
 			return new ModelAndView(rv);
 		}
 	}

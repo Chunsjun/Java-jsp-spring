@@ -17,7 +17,7 @@
 			<ul class="nav navbar-nav">
 				<li><a href="/list">Board</a></li>
 				<li><a href="/map">Map</a></li>
-				<li><a href="#">About</a></li>
+				<li><a href="/about">About</a></li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<c:choose>

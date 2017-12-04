@@ -33,7 +33,6 @@ public class BoardController {
 
 	@RequestMapping(value = "/list")
 	public ModelAndView list(BoardVO vo, HttpServletRequest request) {
-		
 		ModelAndView mv = new ModelAndView("/board/list");
 		PageInfo info = new PageInfo(request, service.cnt(vo));
 		
@@ -49,13 +48,8 @@ public class BoardController {
 	}
 
 	@RequestMapping(value = "/write", method = RequestMethod.GET)
-	public String writeP(UserVO vo,HttpSession session) {
-		vo = (UserVO)session.getAttribute("user");
-		if(vo != null){
-			return "/board/write";
-		}else{
-			return "/user/login";
-		}
+	public String writeP() {
+		return "/board/write";
 	}
 
 	@RequestMapping(value = "/write", method = RequestMethod.POST)
@@ -236,5 +230,4 @@ public class BoardController {
 			return mv;
 		}
 	}
-	
 }

@@ -25,4 +25,8 @@ public class HomeController {
 		return mv;
 	}
 	
+	@RequestMapping(value = "/about")
+	public String about(){
+		return "/etc/about";
+	}
 }
